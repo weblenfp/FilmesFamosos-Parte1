@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/tv_title"
+        android:layout_width="match_parent"
+        android:layout_height="80sp"
+        android:layout_alignParentTop="true"
+        android:layout_below="@id/centerShim"
+        android:background="@color/colorPrimaryDark"
+        android:textSize="30sp"
+        android:textStyle="bold" />
+
+    <View
+        android:id="@+id/centerShim"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/left_layout"
+        android:layout_centerHorizontal="true"
+        android:paddingTop="80sp"
+        android:visibility="invisible" />
+
+    <RelativeLayout
+        android:id="@+id/left_layout"
+        android:layout_width="0sp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_toLeftOf="@+id/centerShim"
+        android:layout_toStartOf="@+id/centerShim"
+        android:paddingTop="80sp">
+
+        <ImageView
+            android:id="@+id/iv_poster"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingTop="40sp"
+            tools:ignore="ContentDescription"
+            android:layout_centerHorizontal="true"/>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/right_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_toEndOf="@+id/centerShim"
+        android:layout_toRightOf="@+id/centerShim"
+        android:paddingTop="80sp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            tools:ignore="UselessParent">
+
+            <ScrollView
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="2">
+
+                <TextView
+                    android:id="@+id/tv_overview"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="5sp"
+                    android:textSize="15sp"
+                    android:text="@string/label_overview"/>
+            </ScrollView>
+
+            <TextView
+                android:id="@+id/tv_vote_average"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="5sp"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                android:text="@string/label_vote_average"/>
+
+            <TextView
+                android:id="@+id/tv_release_date"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:padding="5sp"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                android:text="@string/label_release_date"/>
+        </LinearLayout>
+    </RelativeLayout>
+</RelativeLayout>
