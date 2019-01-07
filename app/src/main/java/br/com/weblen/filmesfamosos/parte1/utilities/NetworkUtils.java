@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import br.com.weblen.filmesfamosos.parte1.BuildConfig;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -30,7 +31,7 @@ public class NetworkUtils {
 
     private static URL buildURL(String URL) {
         Uri builtUri = Uri.parse(URL).buildUpon()
-                .appendQueryParameter(Constants.PARAM_API_KEY, Constants.VALUE_API_KEY)
+                .appendQueryParameter(Constants.PARAM_API_KEY, BuildConfig.VALUE_API_KEY)
                 .appendQueryParameter(Constants.PARAM_PAGE, Constants.VALUE_PAGE)
                 .appendQueryParameter(Constants.PARAM_LANGUAGE, Constants.VALUE_LANGUAGE)
                 .build();

@@ -19,7 +19,7 @@ import br.com.weblen.filmesfamosos.parte1.R;
 import br.com.weblen.filmesfamosos.parte1.models.Movie;
 import br.com.weblen.filmesfamosos.parte1.utilities.NetworkUtils;
 
-public class MovieDetail extends AppCompatActivity {
+public class MovieDetailActivity extends AppCompatActivity {
 
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR1)
     @Override
