@@ -112,7 +112,7 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR1)
     @Override
     public void OnClick(Movie movie) {
-        Intent intent = new Intent(this, MovieDetail.class);
+        Intent intent = new Intent(this, MovieDetailActivity.class);
         intent.putExtra(Intent.EXTRA_REFERRER, movie);
         startActivity(intent);
     }

@@ -3,7 +3,6 @@ package br.com.weblen.filmesfamosos.parte1.utilities;
 final class Constants {
 
     public static final String PARAM_API_KEY = "api_key";
-    public static final String VALUE_API_KEY = "";
     public static final String PARAM_PAGE = "page";
     public static final String VALUE_PAGE = "1";
     public static final String PARAM_LANGUAGE = "language";

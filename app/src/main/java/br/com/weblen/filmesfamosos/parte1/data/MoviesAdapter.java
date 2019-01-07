@@ -17,7 +17,7 @@ import br.com.weblen.filmesfamosos.parte1.utilities.NetworkUtils;
 
 public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesAdapterViewHolder> {
 
-    private ArrayList<Movie> movies = new ArrayList<>();
+    private       ArrayList<Movie>           movies = new ArrayList<>();
     private final MoviesAdapterClickListener mClickListener;
 
     public MoviesAdapter(MoviesAdapterClickListener clickListener) {
@@ -61,19 +61,24 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesAdap
         public MoviesAdapterViewHolder(View itemView) {
             super(itemView);
             mMoviePoster = itemView.findViewById(R.id.iv_movie);
+
             itemView.setOnClickListener(this);
         }
 
         void setImage() {
-            int adapterPosition = getAdapterPosition();
-            Movie movie = movies.get(adapterPosition);
-            Picasso.with(itemView.getContext()).load(NetworkUtils.buildUrlPosterW342(movie.getPosterPath())).into(mMoviePoster);
+            int   adapterPosition = getAdapterPosition();
+            Movie movie           = movies.get(adapterPosition);
+            Picasso.with(itemView.getContext())
+                    .load(NetworkUtils.buildUrlPosterW342(movie.getPosterPath()))
+                    .placeholder(R.drawable.ic_placeholder)
+                    .error(R.drawable.ic_error)
+                    .into(mMoviePoster);
         }
 
         @Override
         public void onClick(View v) {
-            int adapterPosition = getAdapterPosition();
-            Movie movie = movies.get(adapterPosition);
+            int   adapterPosition = getAdapterPosition();
+            Movie movie           = movies.get(adapterPosition);
             mClickListener.OnClick(movie);
         }
     }
