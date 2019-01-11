@@ -1,4 +1,4 @@
-package br.com.weblen.filmesfamosos.parte1;
+package br.com.weblen.app;
 
 import org.junit.Test;
 

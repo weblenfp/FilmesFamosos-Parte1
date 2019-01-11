@@ -1,4 +1,4 @@
-package br.com.weblen.filmesfamosos.parte1.views;
+package br.com.weblen.app.views;
 
 import android.content.Intent;
 import android.os.Build;
@@ -15,9 +15,9 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-import br.com.weblen.filmesfamosos.parte1.R;
-import br.com.weblen.filmesfamosos.parte1.models.Movie;
-import br.com.weblen.filmesfamosos.parte1.utilities.NetworkUtils;
+import br.com.weblen.app.R;
+import br.com.weblen.app.models.Movie;
+import br.com.weblen.app.utilities.NetworkUtils;
 
 public class MovieDetailActivity extends AppCompatActivity {
 

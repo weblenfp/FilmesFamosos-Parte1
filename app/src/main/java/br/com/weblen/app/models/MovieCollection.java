@@ -1,4 +1,4 @@
-package br.com.weblen.filmesfamosos.parte1.models;
+package br.com.weblen.app.models;
 
 import com.google.gson.annotations.SerializedName;
 
