@@ -1,4 +1,4 @@
-package br.com.weblen.filmesfamosos.parte1.data;
+package br.com.weblen.app.data;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
@@ -11,9 +11,9 @@ import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
-import br.com.weblen.filmesfamosos.parte1.R;
-import br.com.weblen.filmesfamosos.parte1.models.Movie;
-import br.com.weblen.filmesfamosos.parte1.utilities.NetworkUtils;
+import br.com.weblen.app.R;
+import br.com.weblen.app.models.Movie;
+import br.com.weblen.app.utilities.NetworkUtils;
 
 public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesAdapterViewHolder> {
 
