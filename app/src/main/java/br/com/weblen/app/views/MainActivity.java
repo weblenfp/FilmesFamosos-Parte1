@@ -1,9 +1,6 @@
 package br.com.weblen.app.views;
 
-import android.content.Context;
 import android.content.Intent;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.RequiresApi;
@@ -27,6 +24,7 @@ import br.com.weblen.app.models.MovieCollection;
 import br.com.weblen.app.utilities.APIClient;
 import br.com.weblen.app.utilities.APIInterface;
 import br.com.weblen.app.utilities.Constants;
+import br.com.weblen.app.utilities.Helper;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import retrofit2.Call;
@@ -52,17 +50,20 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
 
+        if (!Helper.isInternetAvailable(this))
+            showErrorInternetConnection();
+
         int               spanCount         = 2;
-        GridLayoutManager gridLayoutManager = new GridLayoutManager(this, spanCount);
-        mRecyclerView.setLayoutManager(gridLayoutManager);
-        mRecyclerView.setHasFixedSize(true);
+            GridLayoutManager gridLayoutManager = new GridLayoutManager(this, spanCount);
+            mRecyclerView.setLayoutManager(gridLayoutManager);
+            mRecyclerView.setHasFixedSize(true);
 
-        moviesAdapter = new MoviesAdapter(this);
-        mRecyclerView.setAdapter(moviesAdapter);
+            moviesAdapter = new MoviesAdapter(this);
+            mRecyclerView.setAdapter(moviesAdapter);
 
-        showProgressBar();
+            showProgressBar();
 
-        fetchMovies(Constants.searchType.BY_POPULAR);
+            fetchMovies(Constants.searchType.BY_POPULAR);
     }
 
     private void fetchMovies(int paramSearchType) {
@@ -99,17 +100,6 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
         });
     }
 
-    private boolean isInternetAvailable() {
-        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-
-        NetworkInfo netInfo = null;
-        if (cm != null) {
-            netInfo = cm.getActiveNetworkInfo();
-        }
-
-        return netInfo != null && netInfo.isConnected();
-    }
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main_menu, menu);
@@ -121,28 +111,27 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
 
         int selectedMenuId = item.getItemId();
 
+        if (!Helper.isInternetAvailable(this)) {
+            showErrorInternetConnection();
+            return false;
+        }
+
         try {
             switch (selectedMenuId) {
 
                 case R.id.menu_popularity:
                     showProgressBar();
-                    if (isInternetAvailable())
-                        fetchMovies(Constants.searchType.BY_POPULAR);
-                    else
-                        showErrorInternetConnection();
+                    fetchMovies(Constants.searchType.BY_POPULAR);
                     break;
                 case R.id.menu_rating:
                     showProgressBar();
-                    if (isInternetAvailable())
-                        fetchMovies(Constants.searchType.BY_TOP_RATED);
-                    else
-                        showErrorInternetConnection();
+                    fetchMovies(Constants.searchType.BY_TOP_RATED);
                 default:
                     break;
             }
 
         } catch (Exception e) {
-            showErrorInternetConnection();
+            showErrorMessage();
         }
 
         return super.onOptionsItemSelected(item);
