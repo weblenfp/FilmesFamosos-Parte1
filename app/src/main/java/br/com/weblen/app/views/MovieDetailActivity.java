@@ -18,8 +18,21 @@ import java.util.Locale;
 import br.com.weblen.app.R;
 import br.com.weblen.app.models.Movie;
 import br.com.weblen.app.utilities.NetworkUtils;
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 public class MovieDetailActivity extends AppCompatActivity {
+
+    @BindView(R.id.tv_title)
+    TextView  mTitle;
+    @BindView(R.id.iv_poster)
+    ImageView mPoster;
+    @BindView(R.id.tv_overview)
+    TextView  mOverview;
+    @BindView(R.id.tv_vote_average)
+    TextView  mVoteAverage;
+    @BindView(R.id.tv_release_date)
+    TextView  mReleaseDate;
 
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR1)
     @Override
@@ -27,19 +40,14 @@ public class MovieDetailActivity extends AppCompatActivity {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_movie_detail);
-
-        TextView mTitle = findViewById(R.id.tv_title);
-        ImageView mPoster = findViewById(R.id.iv_poster);
-        TextView mOverview    = findViewById(R.id.tv_overview);
-        TextView mVoteAverage = findViewById(R.id.tv_vote_average);
-        TextView mReleaseDate = findViewById(R.id.tv_release_date);
+        ButterKnife.bind(this);
 
         Intent intent = getIntent();
 
         if (intent != null && intent.hasExtra(Intent.EXTRA_REFERRER)) {
             Bundle savedData = intent.getExtras();
 
-            Movie  movie = null;
+            Movie movie = null;
 
             if (savedData != null)
                 movie = savedData.getParcelable(Intent.EXTRA_REFERRER);
@@ -67,8 +75,7 @@ public class MovieDetailActivity extends AppCompatActivity {
                     } catch (ParseException e) {
                         e.printStackTrace();
                     }
-                }
-                else
+                } else
                     mReleaseDate.append("-");
             }
         }

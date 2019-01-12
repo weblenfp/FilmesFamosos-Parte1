@@ -27,30 +27,32 @@ import br.com.weblen.app.models.MovieCollection;
 import br.com.weblen.app.utilities.APIClient;
 import br.com.weblen.app.utilities.APIInterface;
 import br.com.weblen.app.utilities.Constants;
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity implements MoviesAdapter.MoviesAdapterClickListener {
 
-    private RecyclerView mRecyclerView;
-    private TextView mErrorMessage;
-    private ProgressBar mProgressBar;
-    private MoviesAdapter moviesAdapter;
+    @BindView(R.id.rv_movies)
+    RecyclerView mRecyclerView;
+    @BindView(R.id.tv_error_message_display)
+    TextView     mErrorMessage;
+    @BindView(R.id.pb_loading_indicator)
+    ProgressBar  mProgressBar;
+    private MoviesAdapter   moviesAdapter;
     private MovieCollection movies;
-    private APIInterface apiInterface;
+    private APIInterface    apiInterface;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        ButterKnife.bind(this);
 
-        mRecyclerView = findViewById(R.id.rv_movies);
-        mErrorMessage = findViewById(R.id.tv_error_message_display);
-        mProgressBar = findViewById(R.id.pb_loading_indicator);
-
-        int spanCount = 2;
+        int               spanCount         = 2;
         GridLayoutManager gridLayoutManager = new GridLayoutManager(this, spanCount);
         mRecyclerView.setLayoutManager(gridLayoutManager);
         mRecyclerView.setHasFixedSize(true);
