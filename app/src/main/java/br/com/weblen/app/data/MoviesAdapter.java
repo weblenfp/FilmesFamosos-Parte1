@@ -14,6 +14,8 @@ import java.util.ArrayList;
 import br.com.weblen.app.R;
 import br.com.weblen.app.models.Movie;
 import br.com.weblen.app.utilities.NetworkUtils;
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesAdapterViewHolder> {
 
@@ -56,11 +58,12 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesAdap
 
     public class MoviesAdapterViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
-        final ImageView mMoviePoster;
+        @BindView(R.id.iv_movie)
+        ImageView mMoviePoster;
 
         public MoviesAdapterViewHolder(View itemView) {
             super(itemView);
-            mMoviePoster = itemView.findViewById(R.id.iv_movie);
+            ButterKnife.bind(this, itemView);
 
             itemView.setOnClickListener(this);
         }

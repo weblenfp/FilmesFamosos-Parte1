@@ -34,45 +34,6 @@ public class Movie implements Parcelable {
         }
      */
 
-    @SerializedName("vote_count")
-    private final long vote_count;
-
-    @SerializedName("id")
-    private final long id;
-
-    @SerializedName("video")
-    private final boolean video;
-
-    @SerializedName("vote_average")
-    private final float vote_average;
-
-    @SerializedName("title")
-    private final String title;
-
-    @SerializedName("popularity")
-    private final float popularity;
-
-    @SerializedName("poster_path")
-    private final String posterPath;
-
-    @SerializedName("original_language")
-    private final String original_language;
-
-    @SerializedName("original_title")
-    private final String original_title;
-
-    @SerializedName("backdrop_path")
-    private final String backdrop_path;
-
-    @SerializedName("adult")
-    private final boolean adult;
-
-    @SerializedName("overview")
-    private final String overview;
-
-    @SerializedName("release_date")
-    private final String release_date;
-
     @SuppressWarnings("unused")
     public static final Creator<Movie> CREATOR = new Creator<Movie>() {
         @Override
@@ -85,6 +46,48 @@ public class Movie implements Parcelable {
             return new Movie[size];
         }
     };
+    @SerializedName("vote_count")
+    private final long vote_count;
+    @SerializedName("id")
+    private final long id;
+    @SerializedName("video")
+    private final boolean video;
+    @SerializedName("vote_average")
+    private final float vote_average;
+    @SerializedName("title")
+    private final String title;
+    @SerializedName("popularity")
+    private final float popularity;
+    @SerializedName("poster_path")
+    private final String posterPath;
+    @SerializedName("original_language")
+    private final String original_language;
+    @SerializedName("original_title")
+    private final String original_title;
+    @SerializedName("backdrop_path")
+    private final String backdrop_path;
+    @SerializedName("adult")
+    private final boolean adult;
+    @SerializedName("overview")
+    private final String overview;
+    @SerializedName("release_date")
+    private final String release_date;
+
+    private Movie(Parcel in) {
+        vote_count = in.readLong();
+        id = in.readLong();
+        video = in.readByte() != 0;
+        vote_average = in.readFloat();
+        title = in.readString();
+        popularity = in.readFloat();
+        posterPath = in.readString();
+        original_language = in.readString();
+        original_title = in.readString();
+        backdrop_path = in.readString();
+        adult = in.readByte() != 0;
+        overview = in.readString();
+        release_date = in.readString();
+    }
 
     public float getVoteAverage() {
         return vote_average;
@@ -104,23 +107,6 @@ public class Movie implements Parcelable {
 
     public String getReleaseDate() {
         return release_date;
-    }
-
-
-    private Movie(Parcel in) {
-        vote_count = in.readLong();
-        id = in.readLong();
-        video = in.readByte() != 0;
-        vote_average = in.readFloat();
-        title = in.readString();
-        popularity = in.readFloat();
-        posterPath = in.readString();
-        original_language = in.readString();
-        original_title = in.readString();
-        backdrop_path = in.readString();
-        adult = in.readByte() != 0;
-        overview = in.readString();
-        release_date = in.readString();
     }
 
     @Override
