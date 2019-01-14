@@ -8,4 +8,5 @@
     <string name="label_overview">Sinopse:</string>
     <string name="label_vote_average">Nota:</string>
     <string name="label_release_date">Data de lançamento:</string>
+    <string name="poster_do_filme">poster do filme</string>
 </resources>

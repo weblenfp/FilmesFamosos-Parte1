@@ -3,6 +3,7 @@ package br.com.weblen.app.views;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
@@ -40,8 +41,6 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
     @BindView(R.id.pb_loading_indicator)
     ProgressBar  mProgressBar;
     private MoviesAdapter   moviesAdapter;
-    private MovieCollection movies;
-    private APIInterface    apiInterface;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,7 +49,7 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
 
-        if (!Helper.isInternetAvailable(this))
+        if (Helper.isInternetAvailable(this) == false)
             showErrorInternetConnection();
 
         int               spanCount         = 2;
@@ -68,7 +67,7 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
 
     private void fetchMovies(int paramSearchType) {
 
-        apiInterface = APIClient.getClient().create(APIInterface.class);
+        APIInterface          apiInterface = APIClient.getClient().create(APIInterface.class);
         Call<MovieCollection> call;
 
         switch (paramSearchType) {
@@ -86,14 +85,14 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
 
         call.enqueue(new Callback<MovieCollection>() {
             @Override
-            public void onResponse(Call<MovieCollection> call, Response<MovieCollection> response) {
+            public void onResponse(@NonNull Call<MovieCollection> call, @NonNull Response<MovieCollection> response) {
                 Log.d("TAG", response.code() + "");
                 MovieCollection responseMovies = response.body();
                 processFinish(responseMovies);
             }
 
             @Override
-            public void onFailure(Call<MovieCollection> call, Throwable t) {
+            public void onFailure(@NonNull Call<MovieCollection> call, @NonNull Throwable t) {
                 call.cancel();
                 showErrorMessage();
             }
@@ -111,7 +110,7 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
 
         int selectedMenuId = item.getItemId();
 
-        if (!Helper.isInternetAvailable(this)) {
+        if (Helper.isInternetAvailable(this) == false) {
             showErrorInternetConnection();
             return false;
         }
@@ -147,7 +146,7 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
 
     private void processFinish(Object output) {
 
-        movies = (MovieCollection) output;
+        MovieCollection movies = (MovieCollection) output;
 
         if (movies != null) {
             ArrayList<Movie> mMovies;

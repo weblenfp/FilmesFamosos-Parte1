@@ -54,7 +54,7 @@ public class MovieDetailActivity extends AppCompatActivity {
 
             if (movie != null) {
                 mTitle.setText(movie.getTitle());
-                Picasso.with(this.getApplicationContext()).load(NetworkUtils.buildUrlPosterW185(movie.getPosterPath())).into(mPoster);
+                Picasso.with(getApplicationContext()).load(NetworkUtils.buildUrlPosterW185(movie.getPosterPath())).into(mPoster);
 
                 if (!movie.getOverview().equals(""))
                     mOverview.append(movie.getOverview());

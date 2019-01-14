@@ -1,6 +1,7 @@
 package br.com.weblen.app.data;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -35,8 +36,9 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesAdap
         notifyDataSetChanged();
     }
 
+    @NonNull
     @Override
-    public MoviesAdapter.MoviesAdapterViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public MoviesAdapter.MoviesAdapterViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         Context        context             = parent.getContext();
         int            layoutIdForListItem = R.layout.movies_list_item;
         LayoutInflater inflater            = LayoutInflater.from(context);
@@ -46,7 +48,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesAdap
     }
 
     @Override
-    public void onBindViewHolder(MoviesAdapter.MoviesAdapterViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull MoviesAdapter.MoviesAdapterViewHolder holder, int position) {
         holder.setImage();
     }
 
@@ -61,7 +63,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesAdap
         @BindView(R.id.iv_movie)
         ImageView mMoviePoster;
 
-        public MoviesAdapterViewHolder(View itemView) {
+        MoviesAdapterViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
 
