@@ -92,17 +92,31 @@ public class Movie implements Parcelable {
         starred = in.readByte() != 0;
     }
 
+    public long getVoteCount() { return vote_count; }
+
+    public long getId() { return id; }
+
+    public boolean getVideo() { return video; };
+
     public float getVoteAverage() {
         return vote_average;
     }
 
-    public String getTitle() {
-        return title;
-    }
+    public String getTitle() { return title; }
+
+    public float getPopularity() { return popularity; }
 
     public String getPosterPath() {
         return posterPath;
     }
+
+    public String getOriginalLanguage() { return original_language; }
+
+    public String getOriginalTitle() { return original_title; }
+
+    public String getBackdropPath() { return backdrop_path; }
+
+    public boolean getAdult() { return adult; }
 
     public String getOverview() {
         return overview;
