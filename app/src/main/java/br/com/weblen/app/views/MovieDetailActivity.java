@@ -5,6 +5,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -17,6 +18,7 @@ import java.util.Locale;
 
 import br.com.weblen.app.R;
 import br.com.weblen.app.models.Movie;
+import br.com.weblen.app.utilities.Constants;
 import br.com.weblen.app.utilities.NetworkUtils;
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -33,6 +35,25 @@ public class MovieDetailActivity extends AppCompatActivity {
     TextView  mVoteAverage;
     @BindView(R.id.tv_release_date)
     TextView  mReleaseDate;
+    @BindView(R.id.iv_star)
+    ImageView mStaredMovie;
+    Movie mMovie = null;
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        outState.putParcelable(Constants.MOVIES, mMovie);
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        if (savedInstanceState != null && savedInstanceState.containsKey(Constants.MOVIES)) {
+            mMovie = savedInstanceState.getParcelable(Constants.MOVIES);
+            buildScreen(mMovie);
+        }
+
+        super.onRestoreInstanceState(savedInstanceState);
+    }
 
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR1)
     @Override
@@ -45,40 +66,67 @@ public class MovieDetailActivity extends AppCompatActivity {
         Intent intent = getIntent();
 
         if (intent != null && intent.hasExtra(Intent.EXTRA_REFERRER)) {
-            Bundle savedData = intent.getExtras();
+            //Bundle savedData = intent.getExtras();
+            Movie movie = intent.getParcelableExtra(Intent.EXTRA_REFERRER);
+            buildScreen(movie);
+        }
 
-            Movie movie = null;
+        mStaredMovie.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                changeStarredStatus();
+                isMovieStarred();
+            }
+        });
+    }
 
-            if (savedData != null)
-                movie = savedData.getParcelable(Intent.EXTRA_REFERRER);
+    private void buildScreen(Movie movie) {
 
-            if (movie != null) {
-                mTitle.setText(movie.getTitle());
-                Picasso.with(getApplicationContext()).load(NetworkUtils.buildUrlPosterW185(movie.getPosterPath())).into(mPoster);
+        mMovie = movie;
 
-                if (!movie.getOverview().equals(""))
-                    mOverview.append(movie.getOverview());
-                else
-                    mOverview.append("-");
+        if (movie!= null) {
+            mTitle.setText(movie.getTitle());
+            Picasso.with(getApplicationContext()).load(NetworkUtils.buildUrlPosterW185(movie.getPosterPath())).into(mPoster);
 
-                if (!String.valueOf(movie.getVoteAverage()).equals(""))
-                    mVoteAverage.append(String.valueOf(movie.getVoteAverage()));
-                else
-                    mVoteAverage.append("-");
+            if (!movie.getOverview().equals(""))
+                mOverview.append(movie.getOverview());
+            else
+                mOverview.append("-");
 
-                if (!movie.getReleaseDate().equals("")) {
-                    Date date;
-                    try {
-                        date = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).parse(movie.getReleaseDate());
-                        String newDate = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(date);
-                        mReleaseDate.append(newDate);
-                    } catch (ParseException e) {
-                        e.printStackTrace();
-                    }
-                } else
-                    mReleaseDate.append("-");
+            if (!String.valueOf(movie.getVoteAverage()).equals(""))
+                mVoteAverage.append(String.valueOf(movie.getVoteAverage()));
+            else
+                mVoteAverage.append("-");
+
+            if (!movie.getReleaseDate().equals("")) {
+                Date date;
+                try {
+                    date = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).parse(movie.getReleaseDate());
+                    String newDate = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(date);
+                    mReleaseDate.append(newDate);
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+            } else
+                mReleaseDate.append("-");
+        }
+
+        isMovieStarred();
+    }
+
+    private void isMovieStarred() {
+        if (mMovie!= null) {
+            if (mMovie.getStarred()) {
+                mStaredMovie.setImageResource(R.drawable.ic_star_blue_24dp);
+            } else {
+                mStaredMovie.setImageResource(R.drawable.ic_star_border_blue_24dp);
             }
         }
     }
 
+    private void changeStarredStatus() {
+        if (mMovie!= null) {
+            mMovie.setStarred(!mMovie.getStarred());
+        }
+    }
 }

@@ -31,6 +31,7 @@ public class Movie implements Parcelable {
           "adult": false,
           "overview": "",
           "release_date": "1995-10-20"
+          "starred: 1"
         }
      */
 
@@ -72,6 +73,7 @@ public class Movie implements Parcelable {
     private final String overview;
     @SerializedName("release_date")
     private final String release_date;
+    private boolean starred;
 
     private Movie(Parcel in) {
         vote_count = in.readLong();
@@ -87,6 +89,7 @@ public class Movie implements Parcelable {
         adult = in.readByte() != 0;
         overview = in.readString();
         release_date = in.readString();
+        starred = in.readByte() != 0;
     }
 
     public float getVoteAverage() {
@@ -109,6 +112,14 @@ public class Movie implements Parcelable {
         return release_date;
     }
 
+    public Boolean getStarred() {
+        return starred;
+    }
+
+    public void setStarred(boolean movieStarred) {
+        starred = movieStarred;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -129,5 +140,6 @@ public class Movie implements Parcelable {
         dest.writeByte((byte) (adult ? 1 : 0));
         dest.writeString(overview);
         dest.writeString(release_date);
+        dest.writeByte((byte) (starred ? 1 : 0));
     }
 }

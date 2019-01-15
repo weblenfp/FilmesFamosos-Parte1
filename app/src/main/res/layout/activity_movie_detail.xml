@@ -8,91 +8,160 @@
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0">
 
-        <android.support.constraint.ConstraintLayout
-            xmlns:android="http://schemas.android.com/apk/res/android"
+        <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
             xmlns:tools="http://schemas.android.com/tools"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
             <android.support.constraint.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="514dp"
+                android:layout_height="wrap_content"
                 android:padding="15dp">
-
-                <TextView
-                    android:id="@+id/tv_title"
-                    android:layout_width="match_parent"
-                    android:layout_height="40dp"
-                    android:layout_alignParentTop="true"
-                    android:layout_marginStart="8dp"
-                    android:layout_marginEnd="8dp"
-                    android:background="@color/colorPrimaryDark"
-                    android:textSize="30sp"
-                    android:textStyle="bold"
-                    tools:text="TITLE" />
 
                 <android.support.constraint.ConstraintLayout
                     android:layout_width="match_parent"
-                    android:layout_height="432dp"
+                    android:layout_height="421dp"
                     android:layout_marginStart="8dp"
-                    android:layout_marginTop="8dp"
                     android:layout_marginEnd="8dp"
-                    android:layout_marginBottom="8dp">
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent">
 
                     <TextView
-                        android:id="@+id/tv_release_date"
-                        android:layout_width="150dp"
-                        android:layout_height="63dp"
-                        android:layout_marginStart="20dp"
-                        android:layout_marginTop="32dp"
-                        android:padding="5sp"
-                        android:text="@string/label_release_date"
-                        android:textSize="15sp"
+                        android:id="@+id/tv_title"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentTop="true"
+                        android:layout_marginBottom="8dp"
+                        android:background="@color/colorPrimaryDark"
+                        android:textSize="30sp"
                         android:textStyle="bold"
-                        app:layout_constraintStart_toEndOf="@+id/iv_poster"
-                        app:layout_constraintTop_toBottomOf="@+id/tv_vote_average"
-                        tools:text="RELEASE DATE" />
+                        app:layout_constraintBottom_toTopOf="@+id/guideline4"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="0.0"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        tools:text="TITLE" />
+
+                    <ImageView
+                        android:id="@+id/iv_poster"
+                        android:layout_width="122dp"
+                        android:layout_height="170dp"
+                        android:layout_marginStart="8dp"
+                        android:layout_marginTop="8dp"
+                        android:layout_marginBottom="8dp"
+                        android:contentDescription="@string/poster_do_filme"
+                        android:paddingTop="8sp"
+                        android:scaleType="centerCrop"
+                        app:layout_constraintBottom_toTopOf="@+id/guideline5"
+                        app:layout_constraintStart_toStartOf="@+id/guideline2"
+                        app:layout_constraintTop_toTopOf="@+id/guideline4"
+                        app:layout_constraintVertical_bias="0.521" />
+
+                    <android.support.constraint.Guideline
+                        android:id="@+id/guideline2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        app:layout_constraintGuide_begin="16dp" />
 
                     <TextView
                         android:id="@+id/tv_vote_average"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="20dp"
-                        android:layout_marginTop="76dp"
+                        android:layout_marginStart="8dp"
+                        android:layout_marginTop="36dp"
+                        android:layout_marginEnd="8dp"
                         android:padding="5sp"
                         android:text="@string/label_vote_average"
                         android:textSize="15sp"
                         android:textStyle="bold"
-                        app:layout_constraintStart_toEndOf="@+id/iv_poster"
-                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintEnd_toStartOf="@+id/guideline3"
+                        app:layout_constraintHorizontal_bias="0.0"
+                        app:layout_constraintStart_toStartOf="@+id/guideline"
+                        app:layout_constraintTop_toBottomOf="@+id/iv_star"
                         tools:text="VOTE AVERAGE" />
 
                     <TextView
-                        android:id="@+id/tv_overview"
-                        android:layout_width="271dp"
-                        android:layout_height="173dp"
-                        android:layout_marginStart="32dp"
-                        android:layout_marginTop="32dp"
+                        android:id="@+id/tv_release_date"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:layout_marginTop="28dp"
+                        android:layout_marginEnd="8dp"
                         android:padding="5sp"
-                        android:text="@string/label_overview"
+                        android:text="@string/label_release_date"
                         android:textSize="15sp"
                         android:textStyle="bold"
+                        app:layout_constraintEnd_toStartOf="@+id/guideline3"
+                        app:layout_constraintHorizontal_bias="0.0"
+                        app:layout_constraintStart_toStartOf="@+id/guideline"
+                        app:layout_constraintTop_toBottomOf="@+id/tv_vote_average"
+                        tools:text="RELEASE DATE" />
+
+                    <TextView
+                        android:id="@+id/tv_overview"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginEnd="16dp"
+                        android:padding="8sp"
+                        android:text="@string/label_overview"
+                        android:textAlignment="viewStart"
+                        android:textSize="15sp"
+                        android:textStyle="bold"
+                        app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/iv_poster"
+                        app:layout_constraintTop_toTopOf="@+id/guideline5"
                         tools:text="OVERVIEW" />
 
+                    <android.support.constraint.Guideline
+                        android:id="@+id/guideline"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        app:layout_constraintGuide_begin="169dp" />
+
+                    <android.support.constraint.Guideline
+                        android:id="@+id/guideline3"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        app:layout_constraintGuide_begin="321dp" />
+
+                    <android.support.constraint.Guideline
+                        android:id="@+id/guideline4"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        app:layout_constraintGuide_begin="87dp" />
+
+                    <android.support.constraint.Guideline
+                        android:id="@+id/guideline5"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        app:layout_constraintGuide_begin="288dp" />
+
                     <ImageView
-                        android:id="@+id/iv_poster"
-                        android:layout_width="98dp"
-                        android:layout_height="147dp"
-                        android:layout_marginStart="32dp"
-                        android:layout_marginTop="68dp"
-                        android:contentDescription="@string/poster_do_filme"
-                        android:scaleType="centerCrop"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
+                        android:id="@+id/iv_star"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:layout_marginTop="24dp"
+                        android:contentDescription="@string/marcar_como_favorito"
+                        android:src="@drawable/ic_star_border_blue_24dp"
+                        app:layout_constraintStart_toStartOf="@+id/guideline"
+                        app:layout_constraintTop_toTopOf="@+id/guideline4" />
+
                 </android.support.constraint.ConstraintLayout>
 
             </android.support.constraint.ConstraintLayout>

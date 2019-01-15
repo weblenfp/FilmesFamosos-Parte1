@@ -4,7 +4,7 @@ android {
     compileSdkVersion 26
     defaultConfig {
         applicationId "br.com.weblen.filmesfamosos.parte1"
-        minSdkVersion 19
+        minSdkVersion 21
         targetSdkVersion 26
         versionCode 1
         versionName "1.0"
@@ -44,7 +44,8 @@ dependencies {
     implementation 'com.squareup.okhttp3:logging-interceptor:3.4.1'
     implementation 'com.squareup.okhttp3:okhttp:3.4.1'
 
-    def BUTTER_KNIFE_VERSION="8.5.1" //current version of butterknife
+    def BUTTER_KNIFE_VERSION="8.5.1"
+    implementation 'org.jetbrains:annotations-java5:15.0' //current version of butterknife
     dependencies {
         implementation "com.jakewharton:butterknife:$BUTTER_KNIFE_VERSION"
         annotationProcessor "com.jakewharton:butterknife-compiler:$BUTTER_KNIFE_VERSION"
