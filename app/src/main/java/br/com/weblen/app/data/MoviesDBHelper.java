@@ -3,7 +3,6 @@ package br.com.weblen.app.data;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.os.Build;
 import android.support.annotation.Nullable;
 
 public class MoviesDBHelper extends SQLiteOpenHelper {
@@ -27,7 +26,7 @@ public class MoviesDBHelper extends SQLiteOpenHelper {
                         MoviesContract.MoviesEntry.COLUMN_ORIGINAL_LANG     + " TEXT NOT NULL, " +
                         MoviesContract.MoviesEntry.COLUMN_RELEASE_DATE      + " TEXT NOT NULL, " +
                         MoviesContract.MoviesEntry.COLUMN_POPULARITY        + " REAL NOT NULL, " +
-                        MoviesContract.MoviesEntry.COLUMN_VOTE_AVARAGE      + " REAL NOT NULL, " +
+                        MoviesContract.MoviesEntry.COLUMN_VOTE_AVERAGE      + " REAL NOT NULL, " +
                         MoviesContract.MoviesEntry.COLUMN_VOTE_COUNT        + " INTEGER NOT NULL, " +
                         MoviesContract.MoviesEntry.COLUMN_POSTER_PATH       + " TEXT NOT NULL, " +
                         MoviesContract.MoviesEntry.COLUMN_BACKDROP_PATH     + " TEXT NOT NULL); ";

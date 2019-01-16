@@ -40,7 +40,7 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
     TextView     mErrorMessage;
     @BindView(R.id.pb_loading_indicator)
     ProgressBar  mProgressBar;
-    private MoviesAdapter   moviesAdapter;
+    private MoviesAdapter moviesAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,16 +53,16 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
             showErrorInternetConnection();
 
         int               spanCount         = 2;
-            GridLayoutManager gridLayoutManager = new GridLayoutManager(this, spanCount);
-            mRecyclerView.setLayoutManager(gridLayoutManager);
-            mRecyclerView.setHasFixedSize(true);
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(this, spanCount);
+        mRecyclerView.setLayoutManager(gridLayoutManager);
+        mRecyclerView.setHasFixedSize(true);
 
-            moviesAdapter = new MoviesAdapter(this);
-            mRecyclerView.setAdapter(moviesAdapter);
+        moviesAdapter = new MoviesAdapter(this);
+        mRecyclerView.setAdapter(moviesAdapter);
 
-            showProgressBar();
+        showProgressBar();
 
-            fetchMovies(Constants.searchType.BY_POPULAR);
+        fetchMovies(Constants.searchType.BY_POPULAR);
     }
 
     private void fetchMovies(int paramSearchType) {

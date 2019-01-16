@@ -48,32 +48,49 @@ public class Movie implements Parcelable {
         }
     };
     @SerializedName("vote_count")
-    private final long vote_count;
+    private final       long           vote_count;
     @SerializedName("id")
-    private final long id;
+    private final       long           id;
     @SerializedName("video")
-    private final boolean video;
+    private final       boolean        video;
     @SerializedName("vote_average")
-    private final float vote_average;
+    private final       float          vote_average;
     @SerializedName("title")
-    private final String title;
+    private final       String         title;
     @SerializedName("popularity")
-    private final float popularity;
+    private final       float          popularity;
     @SerializedName("poster_path")
-    private final String posterPath;
+    private final       String         posterPath;
     @SerializedName("original_language")
-    private final String original_language;
+    private final       String         original_language;
     @SerializedName("original_title")
-    private final String original_title;
+    private final       String         original_title;
     @SerializedName("backdrop_path")
-    private final String backdrop_path;
+    private final       String         backdrop_path;
     @SerializedName("adult")
-    private final boolean adult;
+    private final       boolean        adult;
     @SerializedName("overview")
-    private final String overview;
+    private final       String         overview;
     @SerializedName("release_date")
-    private final String release_date;
-    private boolean starred;
+    private final       String         release_date;
+    private             boolean        starred;
+
+    public Movie(long voteCount, long id, boolean video, float voteAverage, String title, float popularity, String posterPath, String originalLanguage, String originalTitle, String backdropPath, boolean adult, String overview, String releaseDate, boolean starred) {
+        this.vote_count = voteCount;
+        this.id = id;
+        this.video = video;
+        this.vote_average = voteAverage;
+        this.title = title;
+        this.popularity = popularity;
+        this.posterPath = posterPath;
+        this.original_language = originalLanguage;
+        this.original_title = originalTitle;
+        this.backdrop_path = backdropPath;
+        this.adult = adult;
+        this.overview = overview;
+        this.release_date = releaseDate;
+        this.starred = starred;
+    }
 
     private Movie(Parcel in) {
         vote_count = in.readLong();
@@ -92,31 +109,49 @@ public class Movie implements Parcelable {
         starred = in.readByte() != 0;
     }
 
-    public long getVoteCount() { return vote_count; }
+    public long getVoteCount() {
+        return vote_count;
+    }
 
-    public long getId() { return id; }
+    public long getId() {
+        return id;
+    }
 
-    public boolean getVideo() { return video; };
+    public boolean getVideo() {
+        return video;
+    }
 
     public float getVoteAverage() {
         return vote_average;
     }
 
-    public String getTitle() { return title; }
+    public String getTitle() {
+        return title;
+    }
 
-    public float getPopularity() { return popularity; }
+    public float getPopularity() {
+        return popularity;
+    }
 
     public String getPosterPath() {
         return posterPath;
     }
 
-    public String getOriginalLanguage() { return original_language; }
+    public String getOriginalLanguage() {
+        return original_language;
+    }
 
-    public String getOriginalTitle() { return original_title; }
+    public String getOriginalTitle() {
+        return original_title;
+    }
 
-    public String getBackdropPath() { return backdrop_path; }
+    public String getBackdropPath() {
+        return backdrop_path;
+    }
 
-    public boolean getAdult() { return adult; }
+    public boolean getAdult() {
+        return adult;
+    }
 
     public String getOverview() {
         return overview;
@@ -126,7 +161,7 @@ public class Movie implements Parcelable {
         return release_date;
     }
 
-    public Boolean getStarred() {
+    public Boolean isStarred() {
         return starred;
     }
 

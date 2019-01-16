@@ -17,6 +17,7 @@ import java.util.Date;
 import java.util.Locale;
 
 import br.com.weblen.app.R;
+import br.com.weblen.app.data.MoviesDBPersistence;
 import br.com.weblen.app.models.Movie;
 import br.com.weblen.app.utilities.Constants;
 import br.com.weblen.app.utilities.NetworkUtils;
@@ -84,7 +85,7 @@ public class MovieDetailActivity extends AppCompatActivity {
 
         mMovie = movie;
 
-        if (movie!= null) {
+        if (movie != null) {
             mTitle.setText(movie.getTitle());
             Picasso.with(getApplicationContext()).load(NetworkUtils.buildUrlPosterW185(movie.getPosterPath())).into(mPoster);
 
@@ -111,12 +112,15 @@ public class MovieDetailActivity extends AppCompatActivity {
                 mReleaseDate.append("-");
         }
 
+        mMovie = MoviesDBPersistence.checkFavoriteMovies(mMovie, this);
+
         isMovieStarred();
     }
 
     private void isMovieStarred() {
-        if (mMovie!= null) {
-            if (mMovie.getStarred()) {
+
+        if (mMovie != null) {
+            if (mMovie.isStarred()) {
                 mStaredMovie.setImageResource(R.drawable.ic_star_blue_24dp);
             } else {
                 mStaredMovie.setImageResource(R.drawable.ic_star_border_blue_24dp);
@@ -125,8 +129,13 @@ public class MovieDetailActivity extends AppCompatActivity {
     }
 
     private void changeStarredStatus() {
-        if (mMovie!= null) {
-            mMovie.setStarred(!mMovie.getStarred());
+
+        if (mMovie != null) {
+            if (mMovie.isStarred()) {
+                mMovie = MoviesDBPersistence.excludeStarredMovie(mMovie, getApplicationContext());
+            } else {
+                mMovie = MoviesDBPersistence.includeStarredMovie(mMovie, getApplicationContext());
+            }
         }
     }
 }
