@@ -1,7 +1,6 @@
 package br.com.weblen.app.data;
 
 import android.content.Context;
-import android.database.Cursor;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -21,7 +20,6 @@ import butterknife.ButterKnife;
 
 public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesAdapterViewHolder> {
 
-    private Cursor mCursor;
     private       ArrayList<Movie>           movies = new ArrayList<>();
     private final MoviesAdapterClickListener mClickListener;
 
@@ -86,7 +84,6 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesAdap
         public void onClick(View v) {
             int   adapterPosition = getAdapterPosition();
             Movie movie           = movies.get(adapterPosition);
-            //Movie movie = MoviesDBPersistence.fetchMovieDB(mCursor, adapterPosition);
             mClickListener.OnClick(movie);
         }
     }

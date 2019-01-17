@@ -11,9 +11,8 @@ public final class Constants {
     public static final String AUTHORITY        = "br.com.weblen.app";
     public static final String PATH_MOVIES      = "movies";
     public static final Uri    BASE_CONTENT_URI = Uri.parse("content://" + AUTHORITY);
+    public static final String API_KEY          = "api_key";
+    public static final String API_PAGE         = "page";
 
-    public class searchType {
-        public static final int BY_POPULAR   = 0;
-        public static final int BY_TOP_RATED = 1;
-    }
+
 }

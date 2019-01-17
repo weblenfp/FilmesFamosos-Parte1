@@ -17,20 +17,25 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
-import br.com.weblen.app.BuildConfig;
 import br.com.weblen.app.R;
 import br.com.weblen.app.data.MoviesAdapter;
 import br.com.weblen.app.models.Movie;
 import br.com.weblen.app.models.MovieCollection;
 import br.com.weblen.app.utilities.APIClient;
 import br.com.weblen.app.utilities.APIInterface;
-import br.com.weblen.app.utilities.Constants;
+import br.com.weblen.app.utilities.ApiTypes;
+import br.com.weblen.app.utilities.EndlessRecyclerViewScrollListener;
 import br.com.weblen.app.utilities.Helper;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+
+import static br.com.weblen.app.BuildConfig.VALUE_API_KEY;
+import static br.com.weblen.app.utilities.ApiTypes.BY_POPULAR;
+import static br.com.weblen.app.utilities.ApiTypes.BY_STARRED;
+import static br.com.weblen.app.utilities.ApiTypes.BY_TOP_RATED;
 
 public class MainActivity extends AppCompatActivity implements MoviesAdapter.MoviesAdapterClickListener {
 
@@ -40,7 +45,10 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
     TextView     mErrorMessage;
     @BindView(R.id.pb_loading_indicator)
     ProgressBar  mProgressBar;
-    private MoviesAdapter moviesAdapter;
+    private        MoviesAdapter moviesAdapter;
+    private static ApiTypes      currentApiType;
+    private        Integer       currentApiPage = 1;
+    private ArrayList<Movie> mMovies = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,6 +63,16 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
         int               spanCount         = 2;
         GridLayoutManager gridLayoutManager = new GridLayoutManager(this, spanCount);
         mRecyclerView.setLayoutManager(gridLayoutManager);
+
+        mRecyclerView.addOnScrollListener(new EndlessRecyclerViewScrollListener(gridLayoutManager) {
+            @Override
+            public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
+                // Triggered only when new data needs to be appended to the list
+                // Add whatever code is needed to append new items to the bottom of the list
+                loadNextDataFromApi(page);
+            }
+        });
+
         mRecyclerView.setHasFixedSize(true);
 
         moviesAdapter = new MoviesAdapter(this);
@@ -62,20 +80,26 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
 
         showProgressBar();
 
-        fetchMovies(Constants.searchType.BY_POPULAR);
+        fetchMovies(BY_POPULAR);
     }
 
-    private void fetchMovies(int paramSearchType) {
+    private void loadNextDataFromApi(int page) {
+        currentApiPage = ++page;
+        if (currentApiType != BY_STARRED) fetchMovies(currentApiType);
+    }
+
+    private void fetchMovies(ApiTypes paramSearchType) {
 
         APIInterface          apiInterface = APIClient.getClient().create(APIInterface.class);
         Call<MovieCollection> call;
+        currentApiType = paramSearchType;
 
-        switch (paramSearchType) {
-            case Constants.searchType.BY_POPULAR:
-                call = apiInterface.doGetPopularMovies(BuildConfig.VALUE_API_KEY);
+        switch (currentApiType) {
+            case BY_POPULAR:
+                call = apiInterface.doGetPopularMovies(VALUE_API_KEY, currentApiPage.toString());
                 break;
-            case Constants.searchType.BY_TOP_RATED:
-                call = apiInterface.doGetTopRatedMovies(BuildConfig.VALUE_API_KEY);
+            case BY_TOP_RATED:
+                call = apiInterface.doGetTopRatedMovies(VALUE_API_KEY, currentApiPage.toString());
                 break;
 
             default:
@@ -120,11 +144,11 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
 
                 case R.id.menu_popularity:
                     showProgressBar();
-                    fetchMovies(Constants.searchType.BY_POPULAR);
+                    fetchMovies(BY_POPULAR);
                     break;
                 case R.id.menu_rating:
                     showProgressBar();
-                    fetchMovies(Constants.searchType.BY_TOP_RATED);
+                    fetchMovies(BY_TOP_RATED);
                 default:
                     break;
             }
@@ -148,13 +172,21 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
 
         MovieCollection movies = (MovieCollection) output;
 
-        if (movies != null) {
-            ArrayList<Movie> mMovies;
-            mMovies = movies.getObjMovies();
-            moviesAdapter.setMoviesData(mMovies);
+        if (movies != null && movies.getObjMovies().size() > 0) {
             showRecyclerView();
-        } else
+            if (mMovies.isEmpty()) {
+                mMovies = movies.getObjMovies();
+                moviesAdapter.setMoviesData(mMovies);
+                moviesAdapter.notifyDataSetChanged();
+            } else {
+                int positionStart = moviesAdapter.getItemCount();
+                mMovies.addAll(movies.getObjMovies());
+                int itemCount = mMovies.size() - 1;
+                moviesAdapter.notifyItemRangeInserted(positionStart, itemCount);
+            }
+        } else {
             showErrorMessage();
+        }
     }
 
     private void showRecyclerView() {
