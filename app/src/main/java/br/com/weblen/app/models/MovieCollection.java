@@ -40,4 +40,10 @@ public class MovieCollection {
     public ArrayList<Movie> getObjMovies() {
         return objMovieCollection;
     }
+
+    public ArrayList<Movie> getMovies() {
+        return objMovieCollection;
+    }
+
+    public void setMovies(ArrayList<Movie> movies) { objMovieCollection = movies; }
 }

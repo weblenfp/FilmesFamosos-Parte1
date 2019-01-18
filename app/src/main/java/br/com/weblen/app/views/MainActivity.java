@@ -1,6 +1,7 @@
 package br.com.weblen.app.views;
 
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -15,15 +16,21 @@ import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 
 import br.com.weblen.app.R;
 import br.com.weblen.app.data.MoviesAdapter;
+import br.com.weblen.app.data.MoviesContract;
+import br.com.weblen.app.data.MoviesCursorAdapter;
+import br.com.weblen.app.data.MoviesDBPersistence;
 import br.com.weblen.app.models.Movie;
 import br.com.weblen.app.models.MovieCollection;
 import br.com.weblen.app.utilities.APIClient;
 import br.com.weblen.app.utilities.APIInterface;
 import br.com.weblen.app.utilities.ApiTypes;
+import br.com.weblen.app.utilities.Constants;
 import br.com.weblen.app.utilities.EndlessRecyclerViewScrollListener;
 import br.com.weblen.app.utilities.Helper;
 import butterknife.BindView;
@@ -37,18 +44,30 @@ import static br.com.weblen.app.utilities.ApiTypes.BY_POPULAR;
 import static br.com.weblen.app.utilities.ApiTypes.BY_STARRED;
 import static br.com.weblen.app.utilities.ApiTypes.BY_TOP_RATED;
 
-public class MainActivity extends AppCompatActivity implements MoviesAdapter.MoviesAdapterClickListener {
+public class MainActivity extends AppCompatActivity implements MoviesAdapter.MoviesAdapterClickListener,
+        MoviesCursorAdapter.MoviesCursorAdapterClickListener {
 
+    private static ApiTypes currentApiType = BY_POPULAR;
     @BindView(R.id.rv_movies)
     RecyclerView mRecyclerView;
     @BindView(R.id.tv_error_message_display)
     TextView     mErrorMessage;
     @BindView(R.id.pb_loading_indicator)
     ProgressBar  mProgressBar;
-    private        MoviesAdapter moviesAdapter;
-    private static ApiTypes      currentApiType;
-    private        Integer       currentApiPage = 1;
-    private ArrayList<Movie> mMovies = new ArrayList<>();
+    private MoviesAdapter       mMoviesAdapter;
+    private MoviesCursorAdapter mMoviesCursorAdapter;
+    private Integer             currentApiPage = 1;
+    private ArrayList<Movie>    mMovies        = new ArrayList<>();
+
+    @Override
+    protected void onPostResume() {
+        super.onPostResume();
+        if (currentApiType == BY_STARRED) {
+            mMovies.clear();
+            showProgressBar();
+            fetchMovies(currentApiType);
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,7 +77,7 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
         ButterKnife.bind(this);
 
         if (Helper.isInternetAvailable(this) == false)
-            showErrorInternetConnection();
+            showMessage(Constants.no_connection_message);
 
         int               spanCount         = 2;
         GridLayoutManager gridLayoutManager = new GridLayoutManager(this, spanCount);
@@ -73,14 +92,25 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
             }
         });
 
+        mMovies.clear();
+
         mRecyclerView.setHasFixedSize(true);
 
-        moviesAdapter = new MoviesAdapter(this);
-        mRecyclerView.setAdapter(moviesAdapter);
+        mMoviesAdapter = new MoviesAdapter(this);
+        mMoviesCursorAdapter = new MoviesCursorAdapter(this);
+
+        if (currentApiType == BY_STARRED) {
+            mRecyclerView.setAdapter(mMoviesCursorAdapter);
+        } else {
+            mRecyclerView.setAdapter(mMoviesAdapter);
+        }
+
+        mMoviesAdapter = new MoviesAdapter(this);
+        mRecyclerView.setAdapter(mMoviesAdapter);
 
         showProgressBar();
 
-        fetchMovies(BY_POPULAR);
+        fetchMovies(currentApiType);
     }
 
     private void loadNextDataFromApi(int page) {
@@ -101,9 +131,10 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
             case BY_TOP_RATED:
                 call = apiInterface.doGetTopRatedMovies(VALUE_API_KEY, currentApiPage.toString());
                 break;
+            case BY_STARRED:
+                processFinish(getMoviesStarred());
 
             default:
-                showErrorMessage();
                 return;
         }
 
@@ -118,9 +149,34 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
             @Override
             public void onFailure(@NonNull Call<MovieCollection> call, @NonNull Throwable t) {
                 call.cancel();
-                showErrorMessage();
+                showMessage(Constants.error_message);
             }
         });
+    }
+
+    @NotNull
+    private MovieCollection getMoviesStarred() {
+        Cursor           mMoviesCursor     = null;
+        ArrayList<Movie> mMovieArray       = new ArrayList<>();
+        MovieCollection  mMoviesCollection = new MovieCollection();
+
+        mMoviesCursor = getContentResolver().query(MoviesContract.MoviesEntry.CONTENT_URI,
+                null,
+                null,
+                null,
+                null);
+
+        mMoviesCursor.moveToFirst();
+
+        while (mMoviesCursor.moveToNext()) {
+            mMovieArray.add(MoviesDBPersistence.cursorToMovieObject(mMoviesCursor, mMoviesCursor.getPosition()));
+        }
+
+        mMoviesCollection.setMovies(mMovieArray);
+
+        if (mMoviesCollection.getMovies().size() == 0) showMessage(Constants.not_found_message);
+
+        return mMoviesCollection;
     }
 
     @Override
@@ -133,9 +189,12 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
     public boolean onOptionsItemSelected(MenuItem item) {
 
         int selectedMenuId = item.getItemId();
+        mMovies.clear();
+        currentApiType = BY_POPULAR;
+        currentApiPage = 1;
 
-        if (Helper.isInternetAvailable(this) == false) {
-            showErrorInternetConnection();
+        if (selectedMenuId != R.id.menu_starred && Helper.isInternetAvailable(this) == false) {
+            showMessage(Constants.no_connection_message);
             return false;
         }
 
@@ -149,12 +208,18 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
                 case R.id.menu_rating:
                     showProgressBar();
                     fetchMovies(BY_TOP_RATED);
+                    break;
+                case R.id.menu_starred:
+                    showProgressBar();
+                    fetchMovies(BY_STARRED);
+                    break;
                 default:
                     break;
             }
+            mRecyclerView.scrollToPosition(0);
 
         } catch (Exception e) {
-            showErrorMessage();
+            showMessage(Constants.error_message);
         }
 
         return super.onOptionsItemSelected(item);
@@ -168,24 +233,22 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
         startActivity(intent);
     }
 
-    private void processFinish(Object output) {
-
-        MovieCollection movies = (MovieCollection) output;
+    private void processFinish(MovieCollection movies) {
 
         if (movies != null && movies.getObjMovies().size() > 0) {
             showRecyclerView();
-            if (mMovies.isEmpty()) {
+            if (mMovies != null && mMovies.isEmpty()) {
                 mMovies = movies.getObjMovies();
-                moviesAdapter.setMoviesData(mMovies);
-                moviesAdapter.notifyDataSetChanged();
+                mMoviesAdapter.setMoviesData(mMovies);
+                mMoviesAdapter.notifyDataSetChanged();
             } else {
-                int positionStart = moviesAdapter.getItemCount();
+                int positionStart = mMoviesAdapter.getItemCount();
                 mMovies.addAll(movies.getObjMovies());
                 int itemCount = mMovies.size() - 1;
-                moviesAdapter.notifyItemRangeInserted(positionStart, itemCount);
+                mMoviesAdapter.notifyItemRangeInserted(positionStart, itemCount);
             }
         } else {
-            showErrorMessage();
+            showMessage(Constants.error_message);
         }
     }
 
@@ -193,6 +256,7 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
         mProgressBar.setVisibility(View.INVISIBLE);
         mErrorMessage.setVisibility(View.INVISIBLE);
         mRecyclerView.setVisibility(View.VISIBLE);
+        mErrorMessage.setText("");
     }
 
     private void showProgressBar() {
@@ -201,16 +265,18 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
         mRecyclerView.setVisibility(View.INVISIBLE);
     }
 
-    private void showErrorMessage() {
+    private void showMessage(String message) {
         mProgressBar.setVisibility(View.INVISIBLE);
         mRecyclerView.setVisibility(View.INVISIBLE);
         mErrorMessage.setVisibility(View.VISIBLE);
+        if (mErrorMessage.getText().toString().trim().equals(""))
+            mErrorMessage.setText(message);
     }
 
-    private void showErrorInternetConnection() {
-        mProgressBar.setVisibility(View.INVISIBLE);
-        mRecyclerView.setVisibility(View.INVISIBLE);
-        mErrorMessage.setVisibility(View.VISIBLE);
-        mErrorMessage.setText(R.string.error_no_internet_connection);
+    @Override
+    public void onClick(Movie movie) {
+        Intent intent = new Intent(this, MovieDetailActivity.class);
+        intent.putExtra(Intent.EXTRA_REFERRER, movie);
+        startActivity(intent);
     }
 }

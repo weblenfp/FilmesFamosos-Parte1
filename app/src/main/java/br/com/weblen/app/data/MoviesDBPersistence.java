@@ -59,4 +59,40 @@ public class MoviesDBPersistence {
         }
         return movie;
     }
+
+    public static Movie cursorToMovieObject(Cursor cursor, int index) {
+        Movie movie = null;
+        if (cursor != null && cursor.getColumnCount() > 0) {
+            cursor.moveToPosition(index);
+            int idIndex = cursor.getColumnIndex(MoviesContract.MoviesEntry.COLUMN_MOVIE_ID);
+            int titleIndex = cursor.getColumnIndex(MoviesContract.MoviesEntry.COLUMN_TITLE);
+            int originalTitleIndex = cursor.getColumnIndex(MoviesContract.MoviesEntry.COLUMN_ORIGINAL_TITLE);
+            int overviewIndex = cursor.getColumnIndex(MoviesContract.MoviesEntry.COLUMN_OVERVIEW);
+            int originalLangIndex = cursor.getColumnIndex(MoviesContract.MoviesEntry.COLUMN_ORIGINAL_LANG);
+            int releaseDateIndex = cursor.getColumnIndex(MoviesContract.MoviesEntry.COLUMN_RELEASE_DATE);
+            int popularityIndex = cursor.getColumnIndex(MoviesContract.MoviesEntry.COLUMN_POPULARITY);
+            int voteAverageIndex = cursor.getColumnIndex(MoviesContract.MoviesEntry.COLUMN_VOTE_AVERAGE);
+            int voteCountIndex = cursor.getColumnIndex(MoviesContract.MoviesEntry.COLUMN_VOTE_COUNT);
+            int posterPathIndex = cursor.getColumnIndex(MoviesContract.MoviesEntry.COLUMN_POSTER_PATH);
+            int backdropPathIndex = cursor.getColumnIndex(MoviesContract.MoviesEntry.COLUMN_BACKDROP_PATH);
+
+
+            String title = cursor.getString(titleIndex);
+            String originalTitle = cursor.getString(originalTitleIndex);
+            String overview = cursor.getString(overviewIndex);
+            String originalLang = cursor.getString(originalLangIndex);
+            String releaseDate = cursor.getString(releaseDateIndex);
+            float popularity = cursor.getFloat(popularityIndex);
+            float voteAverage = cursor.getFloat(voteAverageIndex);
+            int voteCount = cursor.getInt(voteCountIndex);
+            String posterPath = cursor.getString(posterPathIndex);
+            String backdropPath = cursor.getString(backdropPathIndex);
+            long id = cursor.getLong(idIndex);
+
+            movie = new Movie(voteCount, id, true, voteAverage, title, popularity, posterPath, originalLang, originalTitle,
+                    backdropPath, false, overview, releaseDate, true);
+        }
+
+        return movie;
+    }
 }

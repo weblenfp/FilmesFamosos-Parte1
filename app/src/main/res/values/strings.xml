@@ -1,10 +1,9 @@
 <resources>
     <string name="app_name">Filmes Famosos - Parte 1</string>
-    <string name="error_message">Ocorreu um problema com sua requisição!</string>
-    <string name="error_no_internet_connection">Sem conexão</string>
     <string name="title_activity_movie_detail">MovieDetailActivity</string>
     <string name="menu_popularity">Ordenar por Popularidade</string>
     <string name="menu_rating">Ordenar por Avaliação</string>
+    <string name="menu_favorites">Ordenar por Favoritos</string>
     <string name="label_overview">Sinopse:\n</string>
     <string name="label_vote_average">Nota:\n</string>
     <string name="label_release_date">Data de lançamento:\n</string>
