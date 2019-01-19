@@ -13,8 +13,11 @@ public final class Constants {
     public static final Uri    BASE_CONTENT_URI = Uri.parse("content://" + AUTHORITY);
     public static final String API_KEY          = "api_key";
     public static final String API_PAGE         = "page";
+    public static final String MOVIE_ID         = "id";
 
-    public static final String error_message = "Ocorreu um problema com sua requisição!";
-    public static final String not_found_message = "Nenhum filme encontrado!";
+    public static final String error_message         = "Ocorreu um problema com sua requisição!";
+    public static final String not_found_message     = "Nenhum filme encontrado!";
     public static final String no_connection_message = "Sem conexão";
+
+    public static final String YOUTUBE_URL = "https://www.youtube.com/watch?v=";
 }

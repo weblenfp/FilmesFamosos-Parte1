@@ -21,15 +21,15 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 
 import br.com.weblen.app.R;
-import br.com.weblen.app.data.MoviesAdapter;
+import br.com.weblen.app.adapters.MoviesAdapter;
 import br.com.weblen.app.data.MoviesContract;
-import br.com.weblen.app.data.MoviesCursorAdapter;
+import br.com.weblen.app.adapters.MoviesCursorAdapter;
 import br.com.weblen.app.data.MoviesDBPersistence;
 import br.com.weblen.app.models.Movie;
 import br.com.weblen.app.models.MovieCollection;
-import br.com.weblen.app.utilities.APIClient;
-import br.com.weblen.app.utilities.APIInterface;
-import br.com.weblen.app.utilities.ApiTypes;
+import br.com.weblen.app.api.APIClient;
+import br.com.weblen.app.api.APIInterface;
+import br.com.weblen.app.api.ApiTypes;
 import br.com.weblen.app.utilities.Constants;
 import br.com.weblen.app.utilities.EndlessRecyclerViewScrollListener;
 import br.com.weblen.app.utilities.Helper;
@@ -40,9 +40,9 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 import static br.com.weblen.app.BuildConfig.VALUE_API_KEY;
-import static br.com.weblen.app.utilities.ApiTypes.BY_POPULAR;
-import static br.com.weblen.app.utilities.ApiTypes.BY_STARRED;
-import static br.com.weblen.app.utilities.ApiTypes.BY_TOP_RATED;
+import static br.com.weblen.app.api.ApiTypes.BY_POPULAR;
+import static br.com.weblen.app.api.ApiTypes.BY_STARRED;
+import static br.com.weblen.app.api.ApiTypes.BY_TOP_RATED;
 
 public class MainActivity extends AppCompatActivity implements MoviesAdapter.MoviesAdapterClickListener,
         MoviesCursorAdapter.MoviesCursorAdapterClickListener {

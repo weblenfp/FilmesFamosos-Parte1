@@ -16,8 +16,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.0">
 
-        <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-            xmlns:tools="http://schemas.android.com/tools"
+        <android.support.constraint.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
@@ -135,14 +134,14 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:orientation="vertical"
-                        app:layout_constraintGuide_begin="169dp" />
+                        app:layout_constraintGuide_begin="183dp" />
 
                     <android.support.constraint.Guideline
                         android:id="@+id/guideline3"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:orientation="vertical"
-                        app:layout_constraintGuide_begin="321dp" />
+                        app:layout_constraintGuide_begin="350dp" />
 
                     <android.support.constraint.Guideline
                         android:id="@+id/guideline5"
@@ -161,6 +160,41 @@
                         android:src="@drawable/ic_star_border_blue_24dp"
                         app:layout_constraintStart_toStartOf="@+id/guideline"
                         app:layout_constraintTop_toBottomOf="@+id/tv_title" />
+
+                    <ProgressBar
+                        android:id="@+id/pb_loading_indicator_trailers"
+                        android:layout_width="42dp"
+                        android:layout_height="42dp"
+                        android:layout_gravity="center"
+                        android:layout_marginTop="32dp"
+                        android:layout_marginBottom="8dp"
+                        android:visibility="invisible"
+                        app:layout_constraintBottom_toTopOf="@+id/rv_reviews"
+                        app:layout_constraintEnd_toEndOf="@+id/rv_trailers"
+                        app:layout_constraintStart_toStartOf="@+id/rv_trailers"
+                        app:layout_constraintTop_toTopOf="@+id/rv_trailers" />
+
+                    <android.support.v7.widget.RecyclerView
+                        android:id="@+id/rv_trailers"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:layout_marginTop="16dp"
+                        android:layout_marginEnd="8dp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/tv_overview" />
+
+                    <android.support.v7.widget.RecyclerView
+                        android:id="@+id/rv_reviews"
+                        android:layout_width="0dp"
+                        android:layout_height="89dp"
+                        android:layout_marginStart="8dp"
+                        android:layout_marginTop="16dp"
+                        android:layout_marginEnd="8dp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/rv_trailers" />
 
                 </android.support.constraint.ConstraintLayout>
 

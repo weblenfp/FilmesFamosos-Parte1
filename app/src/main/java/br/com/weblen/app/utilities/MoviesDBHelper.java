@@ -1,9 +1,11 @@
-package br.com.weblen.app.data;
+package br.com.weblen.app.utilities;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.support.annotation.Nullable;
+
+import br.com.weblen.app.data.MoviesContract;
 
 public class MoviesDBHelper extends SQLiteOpenHelper {
 

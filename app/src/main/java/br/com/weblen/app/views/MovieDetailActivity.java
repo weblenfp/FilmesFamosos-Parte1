@@ -3,42 +3,70 @@ package br.com.weblen.app.views;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 
 import br.com.weblen.app.R;
+import br.com.weblen.app.adapters.TrailersAdapter;
+import br.com.weblen.app.api.APIClient;
+import br.com.weblen.app.api.APIInterface;
+import br.com.weblen.app.api.ApiTypes;
 import br.com.weblen.app.data.MoviesDBPersistence;
 import br.com.weblen.app.models.Movie;
+import br.com.weblen.app.models.Trailer;
+import br.com.weblen.app.models.TrailerCollection;
 import br.com.weblen.app.utilities.Constants;
 import br.com.weblen.app.utilities.NetworkUtils;
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
-public class MovieDetailActivity extends AppCompatActivity {
+import static br.com.weblen.app.BuildConfig.VALUE_API_KEY;
+import static br.com.weblen.app.api.ApiTypes.TRAILERS;
 
+public class MovieDetailActivity extends AppCompatActivity  {
+
+    private static ApiTypes           currentApiType;
     @BindView(R.id.tv_title)
-    TextView  mTitle;
+    TextView     mTitle;
     @BindView(R.id.iv_poster)
-    ImageView mPoster;
+    ImageView    mPoster;
     @BindView(R.id.tv_overview)
-    TextView  mOverview;
+    TextView     mOverview;
     @BindView(R.id.tv_vote_average)
-    TextView  mVoteAverage;
+    TextView     mVoteAverage;
     @BindView(R.id.tv_release_date)
-    TextView  mReleaseDate;
+    TextView     mReleaseDate;
     @BindView(R.id.iv_star)
-    ImageView mStaredMovie;
+    ImageView    mStaredMovie;
+    @BindView(R.id.rv_trailers)
+    RecyclerView mRecyclerViewTrailers;
+    @BindView(R.id.rv_reviews)
+    RecyclerView mRecyclerViewReviews;
+    @BindView(R.id.pb_loading_indicator_trailers)
+    ProgressBar  mProgressBarTrailers;
+
     Movie mMovie = null;
+    private     ArrayList<Trailer> mTrailers = new ArrayList<>();
+    private     TrailersAdapter    mTrailersAdapter;
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
@@ -64,6 +92,20 @@ public class MovieDetailActivity extends AppCompatActivity {
         setContentView(R.layout.activity_movie_detail);
         ButterKnife.bind(this);
 
+        LinearLayoutManager lmReviewsManager  = new LinearLayoutManager(this);
+        LinearLayoutManager lmTrailersManager = new LinearLayoutManager(this);
+        mRecyclerViewTrailers.setLayoutManager(lmReviewsManager);
+        mRecyclerViewReviews.setLayoutManager(lmTrailersManager);
+
+        mRecyclerViewTrailers.setHasFixedSize(true);
+        mRecyclerViewReviews.setHasFixedSize(true);
+
+        mTrailersAdapter = new TrailersAdapter();
+        //mVideoAdapter = new VideoAdapter();
+
+        mRecyclerViewTrailers.setAdapter(mTrailersAdapter);
+        //mBinding.rvReviews.setAdapter(mReviewAdapter);
+
         Intent intent = getIntent();
 
         if (intent != null && intent.hasExtra(Intent.EXTRA_REFERRER)) {
@@ -79,6 +121,9 @@ public class MovieDetailActivity extends AppCompatActivity {
                 isMovieStarred();
             }
         });
+
+        showProgressBar();
+        fetchData(TRAILERS);
     }
 
     private void buildScreen(Movie movie) {
@@ -138,4 +183,69 @@ public class MovieDetailActivity extends AppCompatActivity {
             }
         }
     }
+
+    private void fetchData(ApiTypes paramSearchType) {
+
+        APIInterface            apiInterface = APIClient.getClient().create(APIInterface.class);
+        Call<TrailerCollection> call;
+        currentApiType = paramSearchType;
+
+        switch (currentApiType) {
+            case TRAILERS:
+                call = apiInterface.doGetMovieTrailers(String.valueOf(mMovie.getId()), VALUE_API_KEY);
+                break;
+//            case REVIEWS:
+//                call = apiInterface.doGetMovieReviews(VALUE_API_KEY);
+//                break;
+
+            default:
+                return;
+        }
+
+        call.enqueue(new Callback<TrailerCollection>() {
+            @Override
+            public void onResponse(@NonNull Call<TrailerCollection> call, @NonNull Response<TrailerCollection> response) {
+                Log.d("TAG", response.code() + "");
+                TrailerCollection responseTrailers = response.body();
+                processFinish(responseTrailers);
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<TrailerCollection> call, @NonNull Throwable t) {
+                call.cancel();
+//                showMessage(Constants.error_message);
+            }
+        });
+    }
+
+    private void processFinish(TrailerCollection trailers) {
+
+        if (trailers != null && trailers.getTrailers().size() > 0) {
+            mTrailers.clear();
+            mTrailers.addAll(trailers.getTrailers());
+            mTrailersAdapter.setTrailers(mTrailers);
+            showRecyclerViewTrailers();
+        }
+    }
+
+    private void showRecyclerViewTrailers() {
+        mProgressBarTrailers.setVisibility(View.INVISIBLE);
+        //mErrorMessage.setVisibility(View.INVISIBLE);
+        mRecyclerViewTrailers.setVisibility(View.VISIBLE);
+        //mErrorMessage.setText("");
+    }
+
+    private void showProgressBar() {
+        mProgressBarTrailers.setVisibility(View.VISIBLE);
+//        mErrorMessage.setVisibility(View.INVISIBLE);
+        mRecyclerViewTrailers.setVisibility(View.INVISIBLE);
+    }
+
+//    private void showMessage(String message) {
+//        mProgressBar.setVisibility(View.INVISIBLE);
+//        mRecyclerView.setVisibility(View.INVISIBLE);
+//        mErrorMessage.setVisibility(View.VISIBLE);
+//        if (mErrorMessage.getText().toString().trim().equals(""))
+//            mErrorMessage.setText(message);
+//    }
 }

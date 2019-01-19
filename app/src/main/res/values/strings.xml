@@ -10,4 +10,5 @@
     <string name="poster_do_filme">poster do filme</string>
     <string name="marcar_como_favorito">Marcar como\n Favorito</string>
     <string name="remover_como_favorito">Remover como\n Favorito</string>
+    <string name="play_trailer">Play Trailer</string>
 </resources>

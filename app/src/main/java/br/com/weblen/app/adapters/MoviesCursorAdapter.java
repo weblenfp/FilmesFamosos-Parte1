@@ -1,4 +1,4 @@
-package br.com.weblen.app.data;
+package br.com.weblen.app.adapters;
 
 import android.content.Context;
 import android.database.Cursor;
@@ -11,6 +11,8 @@ import android.widget.ImageView;
 import com.squareup.picasso.Picasso;
 
 import br.com.weblen.app.R;
+import br.com.weblen.app.data.MoviesContract;
+import br.com.weblen.app.data.MoviesDBPersistence;
 import br.com.weblen.app.models.Movie;
 import br.com.weblen.app.utilities.NetworkUtils;
 import butterknife.BindView;

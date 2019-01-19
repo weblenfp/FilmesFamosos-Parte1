@@ -12,6 +12,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import br.com.weblen.app.utilities.Constants;
+import br.com.weblen.app.utilities.MoviesDBHelper;
 
 import static br.com.weblen.app.data.MoviesContract.MoviesEntry.TABLE_NAME;
 

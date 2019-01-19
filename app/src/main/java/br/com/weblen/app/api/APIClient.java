@@ -1,5 +1,6 @@
-package br.com.weblen.app.utilities;
+package br.com.weblen.app.api;
 
+import br.com.weblen.app.utilities.Constants;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
