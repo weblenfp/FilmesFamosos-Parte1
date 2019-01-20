@@ -1,6 +1,7 @@
 package br.com.weblen.app.adapters;
 
 import android.content.Context;
+import android.os.SystemClock;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -20,15 +21,12 @@ import butterknife.ButterKnife;
 
 public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesAdapterViewHolder> {
 
-    private       ArrayList<Movie>           movies = new ArrayList<>();
     private final MoviesAdapterClickListener mClickListener;
+    private       ArrayList<Movie>           movies = new ArrayList<>();
+    private       long                       mLastClickTime;
 
     public MoviesAdapter(MoviesAdapterClickListener clickListener) {
         this.mClickListener = clickListener;
-    }
-
-    public interface MoviesAdapterClickListener {
-        void OnClick(Movie movie);
     }
 
     public void setMoviesData(ArrayList<Movie> movies) {
@@ -58,6 +56,10 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesAdap
         return movies.size();
     }
 
+    public interface MoviesAdapterClickListener {
+        void OnClick(Movie movie);
+    }
+
     public class MoviesAdapterViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         @BindView(R.id.iv_movie)
@@ -82,6 +84,12 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesAdap
 
         @Override
         public void onClick(View v) {
+            // double-clicking prevention, using threshold of 1000 ms
+            if (SystemClock.elapsedRealtime() - mLastClickTime < 1000) {
+                return;
+            }
+            mLastClickTime = SystemClock.elapsedRealtime();
+
             int   adapterPosition = getAdapterPosition();
             Movie movie           = movies.get(adapterPosition);
             mClickListener.OnClick(movie);
