@@ -6,7 +6,10 @@ public final class Constants {
     public static final String BASE_URL             = "https://api.themoviedb.org/";
     public static final String BASE_URL_POSTER_W185 = "http://image.tmdb.org/t/p/w185/";
     public static final String BASE_URL_POSTER_W342 = "http://image.tmdb.org/t/p/w342/";
-    public static final String MOVIES               = "movies";
+    public static final String MOVIE                = "movie";
+    public static final String MOVIE_COLLECTION     = "movie_collection";
+    public static final String TRAILERS             = "trailers";
+    public static final String REVIEWS              = "reviews";
 
     public static final String AUTHORITY        = "br.com.weblen.app";
     public static final String PATH_MOVIES      = "movies";

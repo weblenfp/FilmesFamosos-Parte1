@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
@@ -42,9 +43,11 @@ import retrofit2.Response;
 import static br.com.weblen.app.BuildConfig.VALUE_API_KEY;
 import static br.com.weblen.app.api.ApiTypes.TRAILERS;
 
-public class MovieDetailActivity extends AppCompatActivity  {
+public class MovieDetailActivity extends AppCompatActivity {
 
-    private static ApiTypes           currentApiType;
+    private static ApiTypes currentApiType;
+    @BindView(R.id.scroll_view)
+    ScrollView   mScrollView;
     @BindView(R.id.tv_title)
     TextView     mTitle;
     @BindView(R.id.iv_poster)
@@ -65,23 +68,34 @@ public class MovieDetailActivity extends AppCompatActivity  {
     ProgressBar  mProgressBarTrailers;
 
     Movie mMovie = null;
-    private     ArrayList<Trailer> mTrailers = new ArrayList<>();
-    private     TrailersAdapter    mTrailersAdapter;
+    private ArrayList<Trailer> mTrailersArray     = new ArrayList<>();
+    private TrailersAdapter    mTrailersAdapter;
+    private TrailerCollection  mTrailerCollection = new TrailerCollection(mTrailersArray);
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        outState.putParcelable(Constants.MOVIES, mMovie);
+
         super.onSaveInstanceState(outState);
+        outState.putParcelable(Constants.MOVIE, mMovie);
+        outState.putParcelable(Constants.TRAILERS, mTrailerCollection);
     }
 
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
-        if (savedInstanceState != null && savedInstanceState.containsKey(Constants.MOVIES)) {
-            mMovie = savedInstanceState.getParcelable(Constants.MOVIES);
-            buildScreen(mMovie);
-        }
 
         super.onRestoreInstanceState(savedInstanceState);
+        TrailerCollection mTrailerCollection = null;
+
+        if (savedInstanceState != null) {
+            if (savedInstanceState.containsKey(Constants.MOVIE))
+                mMovie = savedInstanceState.getParcelable(Constants.MOVIE);
+            if (savedInstanceState.containsKey(Constants.TRAILERS))
+                mTrailerCollection = savedInstanceState.getParcelable(Constants.TRAILERS);
+
+            buildScreen(mMovie, mTrailerCollection);
+        }
+
+        mScrollView.scrollTo(0, 0);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR1)
@@ -111,7 +125,7 @@ public class MovieDetailActivity extends AppCompatActivity  {
         if (intent != null && intent.hasExtra(Intent.EXTRA_REFERRER)) {
             //Bundle savedData = intent.getExtras();
             Movie movie = intent.getParcelableExtra(Intent.EXTRA_REFERRER);
-            buildScreen(movie);
+            buildScreen(movie, null);
         }
 
         mStaredMovie.setOnClickListener(new View.OnClickListener() {
@@ -126,7 +140,7 @@ public class MovieDetailActivity extends AppCompatActivity  {
         fetchData(TRAILERS);
     }
 
-    private void buildScreen(Movie movie) {
+    private void buildScreen(Movie movie, TrailerCollection trailers) {
 
         mMovie = movie;
 
@@ -160,7 +174,11 @@ public class MovieDetailActivity extends AppCompatActivity  {
         mMovie = MoviesDBPersistence.checkFavoriteMovies(mMovie, this);
 
         isMovieStarred();
+
+        if (trailers != null)
+            processFinish(trailers);
     }
+
 
     private void isMovieStarred() {
 
@@ -221,9 +239,10 @@ public class MovieDetailActivity extends AppCompatActivity  {
     private void processFinish(TrailerCollection trailers) {
 
         if (trailers != null && trailers.getTrailers().size() > 0) {
-            mTrailers.clear();
-            mTrailers.addAll(trailers.getTrailers());
-            mTrailersAdapter.setTrailers(mTrailers);
+            mTrailersArray.clear();
+            mTrailersArray.addAll(trailers.getTrailers());
+            mTrailersAdapter.setTrailers(mTrailersArray);
+            mTrailerCollection.setTrailers(mTrailersArray);
             showRecyclerViewTrailers();
         }
     }

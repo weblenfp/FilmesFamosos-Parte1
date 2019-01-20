@@ -22,14 +22,14 @@ import java.util.ArrayList;
 
 import br.com.weblen.app.R;
 import br.com.weblen.app.adapters.MoviesAdapter;
-import br.com.weblen.app.data.MoviesContract;
 import br.com.weblen.app.adapters.MoviesCursorAdapter;
-import br.com.weblen.app.data.MoviesDBPersistence;
-import br.com.weblen.app.models.Movie;
-import br.com.weblen.app.models.MovieCollection;
 import br.com.weblen.app.api.APIClient;
 import br.com.weblen.app.api.APIInterface;
 import br.com.weblen.app.api.ApiTypes;
+import br.com.weblen.app.data.MoviesContract;
+import br.com.weblen.app.data.MoviesDBPersistence;
+import br.com.weblen.app.models.Movie;
+import br.com.weblen.app.models.MovieCollection;
 import br.com.weblen.app.utilities.Constants;
 import br.com.weblen.app.utilities.EndlessRecyclerViewScrollListener;
 import br.com.weblen.app.utilities.Helper;
@@ -54,20 +54,44 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
     TextView     mErrorMessage;
     @BindView(R.id.pb_loading_indicator)
     ProgressBar  mProgressBar;
+    private MovieCollection     mMovies          = null;
     private MoviesAdapter       mMoviesAdapter;
     private MoviesCursorAdapter mMoviesCursorAdapter;
-    private Integer             currentApiPage = 1;
-    private ArrayList<Movie>    mMovies        = new ArrayList<>();
+    private ArrayList<Movie>    mMoviesArray     = new ArrayList<>();
+    private MovieCollection     mMovieCollection = new MovieCollection(mMoviesArray);
+    private Integer             currentApiPage   = 1;
 
     @Override
     protected void onPostResume() {
         super.onPostResume();
         if (currentApiType == BY_STARRED) {
-            mMovies.clear();
+            mMoviesArray.clear();
             showProgressBar();
             fetchMovies(currentApiType);
         }
     }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+
+        super.onSaveInstanceState(outState);
+        outState.putParcelable(Constants.MOVIE_COLLECTION, mMovieCollection);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+
+        super.onRestoreInstanceState(savedInstanceState);
+        MovieCollection mMovieCollection = null;
+
+        if (savedInstanceState != null) {
+            if (savedInstanceState.containsKey(Constants.MOVIE_COLLECTION))
+                mMovieCollection = savedInstanceState.getParcelable(Constants.MOVIE_COLLECTION);
+
+            processFinish(mMovieCollection);
+        }
+    }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,7 +116,7 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
             }
         });
 
-        mMovies.clear();
+        mMoviesArray.clear();
 
         mRecyclerView.setHasFixedSize(true);
 
@@ -158,7 +182,7 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
     private MovieCollection getMoviesStarred() {
         Cursor           mMoviesCursor     = null;
         ArrayList<Movie> mMovieArray       = new ArrayList<>();
-        MovieCollection  mMoviesCollection = new MovieCollection();
+        MovieCollection  mMoviesCollection = new MovieCollection(mMovieArray);
 
         mMoviesCursor = getContentResolver().query(MoviesContract.MoviesEntry.CONTENT_URI,
                 null,
@@ -189,7 +213,7 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
     public boolean onOptionsItemSelected(MenuItem item) {
 
         int selectedMenuId = item.getItemId();
-        mMovies.clear();
+        mMoviesArray.clear();
         currentApiType = BY_POPULAR;
         currentApiPage = 1;
 
@@ -235,16 +259,18 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
 
     private void processFinish(MovieCollection movies) {
 
-        if (movies != null && movies.getObjMovies().size() > 0) {
+        if (movies != null && movies.getMovies().size() > 0) {
             showRecyclerView();
-            if (mMovies != null && mMovies.isEmpty()) {
-                mMovies = movies.getObjMovies();
-                mMoviesAdapter.setMoviesData(mMovies);
+            if (mMoviesArray != null && mMoviesArray.isEmpty()) {
+                mMoviesArray = movies.getMovies();
+                mMoviesAdapter.setMoviesData(mMoviesArray);
+                mMovieCollection.setMovies(mMoviesArray);
                 mMoviesAdapter.notifyDataSetChanged();
             } else {
                 int positionStart = mMoviesAdapter.getItemCount();
-                mMovies.addAll(movies.getObjMovies());
-                int itemCount = mMovies.size() - 1;
+                mMoviesArray.addAll(movies.getMovies());
+                mMovieCollection.setMovies(mMoviesArray);
+                int itemCount = mMoviesArray.size() - 1;
                 mMoviesAdapter.notifyItemRangeInserted(positionStart, itemCount);
             }
         } else {
