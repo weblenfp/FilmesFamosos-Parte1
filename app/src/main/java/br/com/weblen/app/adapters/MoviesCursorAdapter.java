@@ -18,15 +18,10 @@ import br.com.weblen.app.utilities.NetworkUtils;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class MoviesCursorAdapter extends RecyclerView.Adapter<MoviesCursorAdapter.MoviesAdapterViewHolder>{
+public class MoviesCursorAdapter extends RecyclerView.Adapter<MoviesCursorAdapter.MoviesAdapterViewHolder> {
 
-    private       Cursor                           mCursor;
     private final MoviesCursorAdapterClickListener mClickListener;
-
-
-    public interface MoviesCursorAdapterClickListener {
-        void onClick(Movie movie);
-    }
+    private Cursor mCursor;
 
 
     public MoviesCursorAdapter(MoviesCursorAdapterClickListener clickListener) {
@@ -35,10 +30,10 @@ public class MoviesCursorAdapter extends RecyclerView.Adapter<MoviesCursorAdapte
 
     @Override
     public MoviesAdapterViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        Context        context             = parent.getContext();
-        int            layoutIdForListItem = R.layout.movies_list_item;
-        LayoutInflater inflater            = LayoutInflater.from(context);
-        View           view                = inflater.inflate(layoutIdForListItem, parent, false);
+        Context context = parent.getContext();
+        int layoutIdForListItem = R.layout.movies_list_item;
+        LayoutInflater inflater = LayoutInflater.from(context);
+        View view = inflater.inflate(layoutIdForListItem, parent, false);
 
         return new MoviesAdapterViewHolder(view);
     }
@@ -69,7 +64,11 @@ public class MoviesCursorAdapter extends RecyclerView.Adapter<MoviesCursorAdapte
         }
     }
 
-    class MoviesAdapterViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+    public interface MoviesCursorAdapterClickListener {
+        void onClick(Movie movie);
+    }
+
+    class MoviesAdapterViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         @BindView(R.id.iv_movie)
         ImageView mMoviePoster;
@@ -83,20 +82,20 @@ public class MoviesCursorAdapter extends RecyclerView.Adapter<MoviesCursorAdapte
 
         void setImage() {
             int imagePathIndex = mCursor.getColumnIndex(MoviesContract.MoviesEntry.COLUMN_POSTER_PATH);
-            int   adapterPosition = getAdapterPosition();
+            int adapterPosition = getAdapterPosition();
             mCursor.moveToPosition(adapterPosition);
             String imageUrl = mCursor.getString(imagePathIndex);
             Picasso.with(itemView.getContext())
                     .load(NetworkUtils.buildUrlPosterW342(imageUrl))
-                    .placeholder(R.drawable.ic_placeholder)
-                    .error(R.drawable.ic_error)
+                    .placeholder(R.drawable.ic_image_placeholder)
+                    .error(R.drawable.ic_image_error)
                     .into(mMoviePoster);
         }
 
         @Override
         public void onClick(View v) {
-            int   adapterPosition = getAdapterPosition();
-            Movie movie           = MoviesDBPersistence.cursorToMovieObject(mCursor, adapterPosition);
+            int adapterPosition = getAdapterPosition();
+            Movie movie = MoviesDBPersistence.cursorToMovieObject(mCursor, adapterPosition);
             mClickListener.onClick(movie);
         }
     }

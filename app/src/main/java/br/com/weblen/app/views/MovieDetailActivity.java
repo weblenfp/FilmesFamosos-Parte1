@@ -49,34 +49,34 @@ public class MovieDetailActivity extends AppCompatActivity {
     @BindView(R.id.scroll_view)
     NestedScrollView mScrollView;
     @BindView(R.id.tv_title)
-    TextView         mTitle;
+    TextView mTitle;
     @BindView(R.id.iv_poster)
-    ImageView        mPoster;
+    ImageView mPoster;
     @BindView(R.id.tv_overview)
-    TextView         mOverview;
+    TextView mOverview;
     @BindView(R.id.tv_vote_average)
-    TextView         mVoteAverage;
+    TextView mVoteAverage;
     @BindView(R.id.tv_release_date)
-    TextView         mReleaseDate;
+    TextView mReleaseDate;
     @BindView(R.id.iv_star)
-    ImageView        mStaredMovie;
+    ImageView mStaredMovie;
     @BindView(R.id.rv_trailers)
-    RecyclerView     mRecyclerViewTrailers;
+    RecyclerView mRecyclerViewTrailers;
     @BindView(R.id.rv_reviews)
-    RecyclerView     mRecyclerViewReviews;
+    RecyclerView mRecyclerViewReviews;
     @BindView(R.id.pb_loading_indicator_trailers)
-    ProgressBar      mProgressBarTrailers;
+    ProgressBar mProgressBarTrailers;
     @BindView(R.id.pb_loading_indicator_reviews)
-    ProgressBar      mProgressBarReviews;
+    ProgressBar mProgressBarReviews;
 
     Movie mMovie = null;
-    private TrailersAdapter    mTrailersAdapter;
-    private ArrayList<Trailer> mTrailersArray     = new ArrayList<>();
-    private TrailerCollection  mTrailerCollection = new TrailerCollection(mTrailersArray);
+    private TrailersAdapter mTrailersAdapter;
+    private ArrayList<Trailer> mTrailersArray = new ArrayList<>();
+    private TrailerCollection mTrailerCollection = new TrailerCollection(mTrailersArray);
 
-    private ReviewsAdapter          mReviewsAdapter;
-    private ArrayList<ReviewResult> mReviewsArray     = new ArrayList<>();
-    private ReviewCollection        mReviewCollection = new ReviewCollection(mReviewsArray);
+    private ReviewsAdapter mReviewsAdapter;
+    private ArrayList<ReviewResult> mReviewsArray = new ArrayList<>();
+    private ReviewCollection mReviewCollection = new ReviewCollection(mReviewsArray);
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
@@ -116,7 +116,7 @@ public class MovieDetailActivity extends AppCompatActivity {
         setContentView(R.layout.activity_movie_detail);
         ButterKnife.bind(this);
 
-        LinearLayoutManager lmReviewsManager  = new LinearLayoutManager(this);
+        LinearLayoutManager lmReviewsManager = new LinearLayoutManager(this);
         LinearLayoutManager lmTrailersManager = new LinearLayoutManager(this);
         mRecyclerViewTrailers.setLayoutManager(lmReviewsManager);
         mRecyclerViewReviews.setLayoutManager(lmTrailersManager);
@@ -158,7 +158,11 @@ public class MovieDetailActivity extends AppCompatActivity {
 
         if (movie != null) {
             mTitle.setText(movie.getTitle());
-            Picasso.with(getApplicationContext()).load(NetworkUtils.buildUrlPosterW185(movie.getPosterPath())).into(mPoster);
+            Picasso.with(getApplicationContext())
+                    .load(NetworkUtils.buildUrlPosterW185(movie.getPosterPath()))
+                    .placeholder(R.drawable.ic_image_placeholder)
+                    .error(R.drawable.ic_image_error)
+                    .into(mPoster);
 
             if (!movie.getOverview().equals(""))
                 mOverview.append(movie.getOverview());
