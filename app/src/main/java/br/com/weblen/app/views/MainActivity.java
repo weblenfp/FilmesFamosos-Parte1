@@ -54,7 +54,6 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
     TextView     mErrorMessage;
     @BindView(R.id.pb_loading_indicator)
     ProgressBar  mProgressBar;
-    private MovieCollection     mMovies          = null;
     private MoviesAdapter       mMoviesAdapter;
     private MoviesCursorAdapter mMoviesCursorAdapter;
     private ArrayList<Movie>    mMoviesArray     = new ArrayList<>();

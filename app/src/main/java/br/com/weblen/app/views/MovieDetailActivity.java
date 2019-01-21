@@ -99,6 +99,8 @@ public class MovieDetailActivity extends AppCompatActivity {
                 mMovie = savedInstanceState.getParcelable(Constants.MOVIE);
             if (savedInstanceState.containsKey(Constants.TRAILERS))
                 mTrailerCollection = savedInstanceState.getParcelable(Constants.TRAILERS);
+            if (savedInstanceState.containsKey(Constants.REVIEWS))
+                mReviewCollection = savedInstanceState.getParcelable(Constants.REVIEWS);
 
             buildScreen(mMovie, mTrailerCollection, mReviewCollection);
         }
