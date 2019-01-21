@@ -1,6 +1,7 @@
 package br.com.weblen.app.api;
 
 import br.com.weblen.app.models.MovieCollection;
+import br.com.weblen.app.models.ReviewCollection;
 import br.com.weblen.app.models.TrailerCollection;
 import retrofit2.Call;
 import retrofit2.http.GET;
@@ -22,6 +23,6 @@ public interface APIInterface {
     @GET("3/movie/{id}/videos")
     Call<TrailerCollection> doGetMovieTrailers(@Path(value = MOVIE_ID, encoded = true) String movieId, @Query(API_KEY) String api_key);
 
-    //@GET("/movie/{id}/reviews")
-    //Call<MovieCollection> doGetMovieReviews(@Query(API_KEY) String api_key);
+    @GET("3/movie/{id}/reviews")
+    Call<ReviewCollection> doGetMovieReviews(@Path(value = MOVIE_ID, encoded = true) String movieId, @Query(API_KEY) String api_key);
 }

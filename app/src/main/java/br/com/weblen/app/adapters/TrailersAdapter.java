@@ -67,7 +67,7 @@ public class TrailersAdapter extends RecyclerView.Adapter<TrailersAdapter.Traile
 
         void setTrailerTitle() {
             int     adapterPosition = getAdapterPosition();
-            Trailer trailer         = mTrailers.get(adapterPosition);
+            Trailer trailer = mTrailers.get(adapterPosition);
             String  trailerTitle    = trailer.getName();
             this.trailerTitle.setText(trailerTitle);
         }

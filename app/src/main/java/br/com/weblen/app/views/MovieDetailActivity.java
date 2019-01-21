@@ -5,6 +5,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
+import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -12,7 +13,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
-import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
@@ -24,12 +24,14 @@ import java.util.Date;
 import java.util.Locale;
 
 import br.com.weblen.app.R;
+import br.com.weblen.app.adapters.ReviewsAdapter;
 import br.com.weblen.app.adapters.TrailersAdapter;
 import br.com.weblen.app.api.APIClient;
 import br.com.weblen.app.api.APIInterface;
-import br.com.weblen.app.api.ApiTypes;
 import br.com.weblen.app.data.MoviesDBPersistence;
 import br.com.weblen.app.models.Movie;
+import br.com.weblen.app.models.ReviewCollection;
+import br.com.weblen.app.models.ReviewResult;
 import br.com.weblen.app.models.Trailer;
 import br.com.weblen.app.models.TrailerCollection;
 import br.com.weblen.app.utilities.Constants;
@@ -41,36 +43,40 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 import static br.com.weblen.app.BuildConfig.VALUE_API_KEY;
-import static br.com.weblen.app.api.ApiTypes.TRAILERS;
 
 public class MovieDetailActivity extends AppCompatActivity {
 
-    private static ApiTypes currentApiType;
     @BindView(R.id.scroll_view)
-    ScrollView   mScrollView;
+    NestedScrollView mScrollView;
     @BindView(R.id.tv_title)
-    TextView     mTitle;
+    TextView         mTitle;
     @BindView(R.id.iv_poster)
-    ImageView    mPoster;
+    ImageView        mPoster;
     @BindView(R.id.tv_overview)
-    TextView     mOverview;
+    TextView         mOverview;
     @BindView(R.id.tv_vote_average)
-    TextView     mVoteAverage;
+    TextView         mVoteAverage;
     @BindView(R.id.tv_release_date)
-    TextView     mReleaseDate;
+    TextView         mReleaseDate;
     @BindView(R.id.iv_star)
-    ImageView    mStaredMovie;
+    ImageView        mStaredMovie;
     @BindView(R.id.rv_trailers)
-    RecyclerView mRecyclerViewTrailers;
+    RecyclerView     mRecyclerViewTrailers;
     @BindView(R.id.rv_reviews)
-    RecyclerView mRecyclerViewReviews;
+    RecyclerView     mRecyclerViewReviews;
     @BindView(R.id.pb_loading_indicator_trailers)
-    ProgressBar  mProgressBarTrailers;
+    ProgressBar      mProgressBarTrailers;
+    @BindView(R.id.pb_loading_indicator_reviews)
+    ProgressBar      mProgressBarReviews;
 
     Movie mMovie = null;
-    private ArrayList<Trailer> mTrailersArray     = new ArrayList<>();
     private TrailersAdapter    mTrailersAdapter;
+    private ArrayList<Trailer> mTrailersArray     = new ArrayList<>();
     private TrailerCollection  mTrailerCollection = new TrailerCollection(mTrailersArray);
+
+    private ReviewsAdapter          mReviewsAdapter;
+    private ArrayList<ReviewResult> mReviewsArray     = new ArrayList<>();
+    private ReviewCollection        mReviewCollection = new ReviewCollection(mReviewsArray);
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
@@ -78,13 +84,15 @@ public class MovieDetailActivity extends AppCompatActivity {
         super.onSaveInstanceState(outState);
         outState.putParcelable(Constants.MOVIE, mMovie);
         outState.putParcelable(Constants.TRAILERS, mTrailerCollection);
+        outState.putParcelable(Constants.REVIEWS, mReviewCollection);
     }
 
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
 
         super.onRestoreInstanceState(savedInstanceState);
-        TrailerCollection mTrailerCollection = null;
+        mTrailerCollection = null;
+        mReviewCollection = null;
 
         if (savedInstanceState != null) {
             if (savedInstanceState.containsKey(Constants.MOVIE))
@@ -92,7 +100,7 @@ public class MovieDetailActivity extends AppCompatActivity {
             if (savedInstanceState.containsKey(Constants.TRAILERS))
                 mTrailerCollection = savedInstanceState.getParcelable(Constants.TRAILERS);
 
-            buildScreen(mMovie, mTrailerCollection);
+            buildScreen(mMovie, mTrailerCollection, mReviewCollection);
         }
 
         mScrollView.scrollTo(0, 0);
@@ -115,17 +123,17 @@ public class MovieDetailActivity extends AppCompatActivity {
         mRecyclerViewReviews.setHasFixedSize(true);
 
         mTrailersAdapter = new TrailersAdapter();
-        //mVideoAdapter = new VideoAdapter();
+        mReviewsAdapter = new ReviewsAdapter();
 
         mRecyclerViewTrailers.setAdapter(mTrailersAdapter);
-        //mBinding.rvReviews.setAdapter(mReviewAdapter);
+        mRecyclerViewReviews.setAdapter(mReviewsAdapter);
 
         Intent intent = getIntent();
 
         if (intent != null && intent.hasExtra(Intent.EXTRA_REFERRER)) {
             //Bundle savedData = intent.getExtras();
             Movie movie = intent.getParcelableExtra(Intent.EXTRA_REFERRER);
-            buildScreen(movie, null);
+            buildScreen(movie, null, null);
         }
 
         mStaredMovie.setOnClickListener(new View.OnClickListener() {
@@ -136,11 +144,13 @@ public class MovieDetailActivity extends AppCompatActivity {
             }
         });
 
-        showProgressBar();
-        fetchData(TRAILERS);
+        showProgressBarTrailers();
+        fetchTrailers();
+        showProgressBarReviews();
+        fetchReviews();
     }
 
-    private void buildScreen(Movie movie, TrailerCollection trailers) {
+    private void buildScreen(Movie movie, TrailerCollection trailers, ReviewCollection reviews) {
 
         mMovie = movie;
 
@@ -176,7 +186,10 @@ public class MovieDetailActivity extends AppCompatActivity {
         isMovieStarred();
 
         if (trailers != null)
-            processFinish(trailers);
+            processFinishTrailers(trailers);
+
+        if (reviews != null)
+            processFinishReviews(reviews);
     }
 
 
@@ -202,41 +215,53 @@ public class MovieDetailActivity extends AppCompatActivity {
         }
     }
 
-    private void fetchData(ApiTypes paramSearchType) {
+    private void fetchTrailers() {
 
-        APIInterface            apiInterface = APIClient.getClient().create(APIInterface.class);
+        APIInterface apiInterface = APIClient.getClient().create(APIInterface.class);
+
         Call<TrailerCollection> call;
-        currentApiType = paramSearchType;
-
-        switch (currentApiType) {
-            case TRAILERS:
-                call = apiInterface.doGetMovieTrailers(String.valueOf(mMovie.getId()), VALUE_API_KEY);
-                break;
-//            case REVIEWS:
-//                call = apiInterface.doGetMovieReviews(VALUE_API_KEY);
-//                break;
-
-            default:
-                return;
-        }
+        call = apiInterface.doGetMovieTrailers(String.valueOf(mMovie.getId()), VALUE_API_KEY);
 
         call.enqueue(new Callback<TrailerCollection>() {
             @Override
             public void onResponse(@NonNull Call<TrailerCollection> call, @NonNull Response<TrailerCollection> response) {
                 Log.d("TAG", response.code() + "");
                 TrailerCollection responseTrailers = response.body();
-                processFinish(responseTrailers);
+                processFinishTrailers(responseTrailers);
+                hideProgressBarTrailers();
             }
 
             @Override
             public void onFailure(@NonNull Call<TrailerCollection> call, @NonNull Throwable t) {
                 call.cancel();
-//                showMessage(Constants.error_message);
             }
         });
     }
 
-    private void processFinish(TrailerCollection trailers) {
+    private void fetchReviews() {
+
+        APIInterface apiInterface = APIClient.getClient().create(APIInterface.class);
+
+        Call<ReviewCollection> call;
+        call = apiInterface.doGetMovieReviews(String.valueOf(mMovie.getId()), VALUE_API_KEY);
+
+        call.enqueue(new Callback<ReviewCollection>() {
+            @Override
+            public void onResponse(@NonNull Call<ReviewCollection> call, @NonNull Response<ReviewCollection> response) {
+                Log.d("TAG", response.code() + "");
+                ReviewCollection responseReviews = response.body();
+                processFinishReviews(responseReviews);
+                hideProgressBarReviews();
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<ReviewCollection> call, @NonNull Throwable t) {
+                call.cancel();
+            }
+        });
+    }
+
+    private void processFinishTrailers(TrailerCollection trailers) {
 
         if (trailers != null && trailers.getTrailers().size() > 0) {
             mTrailersArray.clear();
@@ -247,24 +272,42 @@ public class MovieDetailActivity extends AppCompatActivity {
         }
     }
 
-    private void showRecyclerViewTrailers() {
-        mProgressBarTrailers.setVisibility(View.INVISIBLE);
-        //mErrorMessage.setVisibility(View.INVISIBLE);
-        mRecyclerViewTrailers.setVisibility(View.VISIBLE);
-        //mErrorMessage.setText("");
+    private void processFinishReviews(ReviewCollection review) {
+
+        if (review != null && review.getReviews().size() > 0) {
+            mReviewsArray.clear();
+            mReviewsArray.addAll(review.getReviews());
+            mReviewsAdapter.setReviews(mReviewsArray);
+            mReviewCollection.setReviews(mReviewsArray);
+            showRecyclerViewReviews();
+        }
     }
 
-    private void showProgressBar() {
+    private void showRecyclerViewTrailers() {
+        mProgressBarTrailers.setVisibility(View.INVISIBLE);
+        mRecyclerViewTrailers.setVisibility(View.VISIBLE);
+    }
+
+    private void showRecyclerViewReviews() {
+        mProgressBarReviews.setVisibility(View.INVISIBLE);
+        mRecyclerViewReviews.setVisibility(View.VISIBLE);
+    }
+
+    private void showProgressBarTrailers() {
         mProgressBarTrailers.setVisibility(View.VISIBLE);
-//        mErrorMessage.setVisibility(View.INVISIBLE);
         mRecyclerViewTrailers.setVisibility(View.INVISIBLE);
     }
 
-//    private void showMessage(String message) {
-//        mProgressBar.setVisibility(View.INVISIBLE);
-//        mRecyclerView.setVisibility(View.INVISIBLE);
-//        mErrorMessage.setVisibility(View.VISIBLE);
-//        if (mErrorMessage.getText().toString().trim().equals(""))
-//            mErrorMessage.setText(message);
-//    }
+    private void hideProgressBarTrailers() {
+        mProgressBarTrailers.setVisibility(View.INVISIBLE);
+    }
+
+    private void showProgressBarReviews() {
+        mProgressBarReviews.setVisibility(View.VISIBLE);
+        mRecyclerViewReviews.setVisibility(View.INVISIBLE);
+    }
+
+    private void hideProgressBarReviews() {
+        mProgressBarReviews.setVisibility(View.INVISIBLE);
+    }
 }
