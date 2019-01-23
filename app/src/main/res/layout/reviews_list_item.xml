@@ -55,6 +55,7 @@
                 android:id="@+id/content"
                 style="@style/textDetailsWithoutMargins"
                 android:layout_marginTop="32dp"
+                android:padding="16sp"
                 android:textAlignment="center"
                 android:textSize="18sp"
                 card_view:layout_constraintBottom_toBottomOf="parent"

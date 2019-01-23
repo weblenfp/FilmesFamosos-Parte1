@@ -28,6 +28,7 @@ public class MoviesDBPersistence {
         contentValues.put(MoviesContract.MoviesEntry.COLUMN_VOTE_COUNT, movie.getVoteCount());
         contentValues.put(MoviesContract.MoviesEntry.COLUMN_POSTER_PATH, movie.getPosterPath());
         contentValues.put(MoviesContract.MoviesEntry.COLUMN_BACKDROP_PATH, movie.getBackdropPath());
+
         context.getContentResolver().insert(MoviesContract.MoviesEntry.CONTENT_URI, contentValues);
 
         return movie;

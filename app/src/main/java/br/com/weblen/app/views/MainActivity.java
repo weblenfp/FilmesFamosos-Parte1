@@ -51,14 +51,14 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
     @BindView(R.id.rv_movies)
     RecyclerView mRecyclerView;
     @BindView(R.id.tv_error_message_display)
-    TextView     mErrorMessage;
+    TextView mErrorMessage;
     @BindView(R.id.pb_loading_indicator)
-    ProgressBar  mProgressBar;
-    private MoviesAdapter       mMoviesAdapter;
+    ProgressBar mProgressBar;
+    private MoviesAdapter mMoviesAdapter;
     private MoviesCursorAdapter mMoviesCursorAdapter;
-    private ArrayList<Movie>    mMoviesArray     = new ArrayList<>();
-    private MovieCollection     mMovieCollection = new MovieCollection(mMoviesArray);
-    private Integer             currentApiPage   = 1;
+    private ArrayList<Movie> mMoviesArray = new ArrayList<>();
+    private MovieCollection mMovieCollection = new MovieCollection(mMoviesArray);
+    private Integer currentApiPage = 1;
 
     @Override
     protected void onPostResume() {
@@ -96,13 +96,14 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
 
         if (Helper.isInternetAvailable(this) == false)
             showMessage(Constants.no_connection_message);
 
-        int               spanCount         = 2;
+        int spanCount = 2;
         GridLayoutManager gridLayoutManager = new GridLayoutManager(this, spanCount);
         mRecyclerView.setLayoutManager(gridLayoutManager);
 
@@ -143,7 +144,7 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
 
     private void fetchMovies(ApiTypes paramSearchType) {
 
-        APIInterface          apiInterface = APIClient.getClient().create(APIInterface.class);
+        APIInterface apiInterface = APIClient.getClient().create(APIInterface.class);
         Call<MovieCollection> call;
         currentApiType = paramSearchType;
 
@@ -179,9 +180,9 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
 
     @NotNull
     private MovieCollection getMoviesStarred() {
-        Cursor           mMoviesCursor     = null;
-        ArrayList<Movie> mMovieArray       = new ArrayList<>();
-        MovieCollection  mMoviesCollection = new MovieCollection(mMovieArray);
+        Cursor mMoviesCursor = null;
+        ArrayList<Movie> mMovieArray = new ArrayList<>();
+        MovieCollection mMoviesCollection = new MovieCollection(mMovieArray);
 
         mMoviesCursor = getContentResolver().query(MoviesContract.MoviesEntry.CONTENT_URI,
                 null,
@@ -189,10 +190,12 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
                 null,
                 null);
 
-        mMoviesCursor.moveToFirst();
-
-        while (mMoviesCursor.moveToNext()) {
-            mMovieArray.add(MoviesDBPersistence.cursorToMovieObject(mMoviesCursor, mMoviesCursor.getPosition()));
+        try {
+            while (mMoviesCursor.moveToNext()) {
+                mMovieArray.add(MoviesDBPersistence.cursorToMovieObject(mMoviesCursor, mMoviesCursor.getPosition()));
+            }
+        } finally {
+            mMoviesCursor.close();
         }
 
         mMoviesCollection.setMovies(mMovieArray);
