@@ -5,7 +5,15 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
-public class Helper {
+public class NetworkHelper {
+
+    public static String buildUrlPosterW185(String posterPath) {
+        return Constants.BASE_URL_POSTER_W185 + posterPath;
+    }
+
+    public static String buildUrlPosterW342(String posterPath) {
+        return Constants.BASE_URL_POSTER_W342 + posterPath;
+    }
 
     public static boolean isInternetAvailable(Activity object) {
         ConnectivityManager cm = (ConnectivityManager) object.getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -15,7 +23,6 @@ public class Helper {
             netInfo = cm.getActiveNetworkInfo();
         }
 
-        return netInfo != null && netInfo.isConnected();
+        return netInfo == null || !netInfo.isConnected();
     }
-
 }
