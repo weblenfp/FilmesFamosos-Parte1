@@ -6,25 +6,25 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 
 public abstract class EndlessRecyclerViewScrollListener extends RecyclerView.OnScrollListener {
-    RecyclerView.LayoutManager mLayoutManager;
+    private final RecyclerView.LayoutManager mLayoutManager;
     // The minimum amount of items to have below your current scroll position
     // before loading more.
-    private int     visibleThreshold       = 5;
+    private       int                        visibleThreshold       = 5;
     // The current offset index of data you have loaded
-    private int     currentPage            = 0;
+    private       int                        currentPage            = 0;
     // The total number of items in the dataset after the last load
-    private int     previousTotalItemCount = 0;
+    private       int                        previousTotalItemCount = 0;
     // True if we are still waiting for the last set of data to load.
-    private boolean loading                = true;
+    private       boolean                    loading                = true;
     // Sets the starting page index
-    private int     startingPageIndex      = 0;
+    private final int                        startingPageIndex      = 0;
 
     public EndlessRecyclerViewScrollListener(GridLayoutManager layoutManager) {
         this.mLayoutManager = layoutManager;
         visibleThreshold = visibleThreshold * layoutManager.getSpanCount();
     }
 
-    public int getLastVisibleItem(int[] lastVisibleItemPositions) {
+    private int getLastVisibleItem(int[] lastVisibleItemPositions) {
         int maxSize = 0;
         for (int i = 0; i < lastVisibleItemPositions.length; i++) {
             if (i == 0) {
@@ -77,7 +77,7 @@ public abstract class EndlessRecyclerViewScrollListener extends RecyclerView.OnS
         // threshold should reflect how many total columns there are too
         if (!loading && (lastVisibleItemPosition + visibleThreshold) > totalItemCount) {
             currentPage++;
-            onLoadMore(currentPage, totalItemCount, view);
+            onLoadMore(currentPage);
             loading = true;
         }
     }
@@ -90,6 +90,6 @@ public abstract class EndlessRecyclerViewScrollListener extends RecyclerView.OnS
     }
 
     // Defines the process for actually loading more data based on page
-    public abstract void onLoadMore(int page, int totalItemsCount, RecyclerView view);
+    protected abstract void onLoadMore(int page);
 
 }

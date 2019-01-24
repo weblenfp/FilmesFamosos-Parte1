@@ -12,9 +12,9 @@ import com.squareup.picasso.Picasso;
 
 import br.com.weblen.app.R;
 import br.com.weblen.app.data.MoviesContract;
-import br.com.weblen.app.data.MoviesDBPersistence;
 import br.com.weblen.app.models.Movie;
-import br.com.weblen.app.utilities.NetworkUtils;
+import br.com.weblen.app.utilities.MoviesDBHelper;
+import br.com.weblen.app.utilities.NetworkHelper;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -73,7 +73,7 @@ public class MoviesCursorAdapter extends RecyclerView.Adapter<MoviesCursorAdapte
         @BindView(R.id.iv_movie)
         ImageView mMoviePoster;
 
-        public MoviesAdapterViewHolder(View itemView) {
+        MoviesAdapterViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
 
@@ -86,7 +86,7 @@ public class MoviesCursorAdapter extends RecyclerView.Adapter<MoviesCursorAdapte
             mCursor.moveToPosition(adapterPosition);
             String imageUrl = mCursor.getString(imagePathIndex);
             Picasso.with(itemView.getContext())
-                    .load(NetworkUtils.buildUrlPosterW342(imageUrl))
+                    .load(NetworkHelper.buildUrlPosterW342(imageUrl))
                     .placeholder(R.drawable.ic_image_placeholder)
                     .error(R.drawable.ic_image_error)
                     .into(mMoviePoster);
@@ -95,7 +95,7 @@ public class MoviesCursorAdapter extends RecyclerView.Adapter<MoviesCursorAdapte
         @Override
         public void onClick(View v) {
             int adapterPosition = getAdapterPosition();
-            Movie movie = MoviesDBPersistence.cursorToMovieObject(mCursor, adapterPosition);
+            Movie movie = MoviesDBHelper.cursorToMovieObject(mCursor, adapterPosition);
             mClickListener.onClick(movie);
         }
     }

@@ -28,7 +28,7 @@ public class ReviewCollection implements Parcelable {
         objReviewCollection = reviews;
     }
 
-    protected ReviewCollection(Parcel in) {
+    private ReviewCollection(Parcel in) {
         objReviewCollection = in.createTypedArrayList(ReviewResult.CREATOR);
     }
 

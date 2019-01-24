@@ -38,7 +38,7 @@ public class Trailer implements Parcelable {
     @SerializedName("type")
     private             String                      type;
 
-    protected Trailer(Parcel in) {
+    private Trailer(Parcel in) {
         this.id = ((String) in.readValue((String.class.getClassLoader())));
         this.iso6391 = ((String) in.readValue((String.class.getClassLoader())));
         this.iso31661 = ((String) in.readValue((String.class.getClassLoader())));
@@ -65,6 +65,7 @@ public class Trailer implements Parcelable {
      * @param key
      * @param size
      */
+    @SuppressWarnings("JavaDoc")
     public Trailer(String id, String iso6391, String iso31661, String key, String name, String site, Integer size, String type) {
         super();
         this.id = id;

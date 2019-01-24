@@ -19,6 +19,7 @@ import android.widget.TextView;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 import br.com.weblen.app.R;
 import br.com.weblen.app.adapters.MoviesAdapter;
@@ -27,12 +28,12 @@ import br.com.weblen.app.api.APIClient;
 import br.com.weblen.app.api.APIInterface;
 import br.com.weblen.app.api.ApiTypes;
 import br.com.weblen.app.data.MoviesContract;
-import br.com.weblen.app.data.MoviesDBPersistence;
 import br.com.weblen.app.models.Movie;
 import br.com.weblen.app.models.MovieCollection;
 import br.com.weblen.app.utilities.Constants;
 import br.com.weblen.app.utilities.EndlessRecyclerViewScrollListener;
-import br.com.weblen.app.utilities.Helper;
+import br.com.weblen.app.utilities.MoviesDBHelper;
+import br.com.weblen.app.utilities.NetworkHelper;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import retrofit2.Call;
@@ -54,11 +55,10 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
     TextView mErrorMessage;
     @BindView(R.id.pb_loading_indicator)
     ProgressBar mProgressBar;
-    private MoviesAdapter mMoviesAdapter;
-    private MoviesCursorAdapter mMoviesCursorAdapter;
-    private ArrayList<Movie> mMoviesArray = new ArrayList<>();
-    private MovieCollection mMovieCollection = new MovieCollection(mMoviesArray);
-    private Integer currentApiPage = 1;
+    private       MoviesAdapter    mMoviesAdapter;
+    private       ArrayList<Movie> mMoviesArray     = new ArrayList<>();
+    private final MovieCollection  mMovieCollection = new MovieCollection(mMoviesArray);
+    private       Integer          currentApiPage   = 1;
 
     @Override
     protected void onPostResume() {
@@ -100,7 +100,7 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
 
-        if (Helper.isInternetAvailable(this) == false)
+        if (NetworkHelper.isInternetAvailable(this))
             showMessage(Constants.no_connection_message);
 
         int spanCount = 2;
@@ -109,7 +109,7 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
 
         mRecyclerView.addOnScrollListener(new EndlessRecyclerViewScrollListener(gridLayoutManager) {
             @Override
-            public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
+            public void onLoadMore(int page) {
                 // Triggered only when new data needs to be appended to the list
                 // Add whatever code is needed to append new items to the bottom of the list
                 loadNextDataFromApi(page);
@@ -121,7 +121,7 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
         mRecyclerView.setHasFixedSize(true);
 
         mMoviesAdapter = new MoviesAdapter(this);
-        mMoviesCursorAdapter = new MoviesCursorAdapter(this);
+        MoviesCursorAdapter mMoviesCursorAdapter = new MoviesCursorAdapter(this);
 
         if (currentApiType == BY_STARRED) {
             mRecyclerView.setAdapter(mMoviesCursorAdapter);
@@ -180,7 +180,7 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
 
     @NotNull
     private MovieCollection getMoviesStarred() {
-        Cursor mMoviesCursor = null;
+        Cursor mMoviesCursor;
         ArrayList<Movie> mMovieArray = new ArrayList<>();
         MovieCollection mMoviesCollection = new MovieCollection(mMovieArray);
 
@@ -191,11 +191,11 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
                 null);
 
         try {
-            while (mMoviesCursor.moveToNext()) {
-                mMovieArray.add(MoviesDBPersistence.cursorToMovieObject(mMoviesCursor, mMoviesCursor.getPosition()));
+            while (Objects.requireNonNull(mMoviesCursor).moveToNext()) {
+                mMovieArray.add(MoviesDBHelper.cursorToMovieObject(mMoviesCursor, mMoviesCursor.getPosition()));
             }
         } finally {
-            mMoviesCursor.close();
+            Objects.requireNonNull(mMoviesCursor).close();
         }
 
         mMoviesCollection.setMovies(mMovieArray);
@@ -219,7 +219,7 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
         currentApiType = BY_POPULAR;
         currentApiPage = 1;
 
-        if (selectedMenuId != R.id.menu_starred && Helper.isInternetAvailable(this) == false) {
+        if (selectedMenuId != R.id.menu_starred && NetworkHelper.isInternetAvailable(this)) {
             showMessage(Constants.no_connection_message);
             return false;
         }

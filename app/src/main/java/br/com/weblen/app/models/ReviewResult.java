@@ -31,7 +31,7 @@ public class ReviewResult implements Parcelable {
     @SerializedName("url")
     private             String                           url;
 
-    protected ReviewResult(Parcel in) {
+    private ReviewResult(Parcel in) {
         this.author = ((String) in.readValue((String.class.getClassLoader())));
         this.content = ((String) in.readValue((String.class.getClassLoader())));
         this.id = ((String) in.readValue((String.class.getClassLoader())));
@@ -50,6 +50,7 @@ public class ReviewResult implements Parcelable {
      * @param author
      * @param url
      */
+    @SuppressWarnings("JavaDoc")
     public ReviewResult(String author, String content, String id, String url) {
         super();
         this.author = author;

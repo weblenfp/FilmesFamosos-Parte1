@@ -15,7 +15,7 @@ import java.util.ArrayList;
 
 import br.com.weblen.app.R;
 import br.com.weblen.app.models.Movie;
-import br.com.weblen.app.utilities.NetworkUtils;
+import br.com.weblen.app.utilities.NetworkHelper;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -76,7 +76,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesAdap
             int   adapterPosition = getAdapterPosition();
             Movie movie           = movies.get(adapterPosition);
             Picasso.with(itemView.getContext())
-                    .load(NetworkUtils.buildUrlPosterW342(movie.getPosterPath()))
+                    .load(NetworkHelper.buildUrlPosterW342(movie.getPosterPath()))
                     .placeholder(R.drawable.ic_image_placeholder)
                     .error(R.drawable.ic_image_error)
                     .into(mMoviePoster);

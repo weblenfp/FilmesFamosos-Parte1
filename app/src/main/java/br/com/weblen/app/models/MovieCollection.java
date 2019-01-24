@@ -23,7 +23,7 @@ public class MovieCollection implements Parcelable {
     @SerializedName("results")
     private             ArrayList<Movie>         objMovieCollection;
 
-    protected MovieCollection(Parcel in) {
+    private MovieCollection(Parcel in) {
         objMovieCollection = in.createTypedArrayList(Movie.CREATOR);
     }
 

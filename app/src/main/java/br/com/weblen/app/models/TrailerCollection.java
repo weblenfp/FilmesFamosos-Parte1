@@ -24,7 +24,7 @@ public class TrailerCollection implements Parcelable {
     @SerializedName("results")
     private             ArrayList<Trailer>         objTrailerCollection;
 
-    public TrailerCollection(Parcel in) {
+    private TrailerCollection(Parcel in) {
         objTrailerCollection = in.createTypedArrayList(Trailer.CREATOR);
     }
 

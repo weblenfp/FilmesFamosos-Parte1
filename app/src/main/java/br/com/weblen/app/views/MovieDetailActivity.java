@@ -28,20 +28,21 @@ import br.com.weblen.app.adapters.ReviewsAdapter;
 import br.com.weblen.app.adapters.TrailersAdapter;
 import br.com.weblen.app.api.APIClient;
 import br.com.weblen.app.api.APIInterface;
-import br.com.weblen.app.data.MoviesDBPersistence;
 import br.com.weblen.app.models.Movie;
 import br.com.weblen.app.models.ReviewCollection;
 import br.com.weblen.app.models.ReviewResult;
 import br.com.weblen.app.models.Trailer;
 import br.com.weblen.app.models.TrailerCollection;
 import br.com.weblen.app.utilities.Constants;
-import br.com.weblen.app.utilities.NetworkUtils;
+import br.com.weblen.app.utilities.MoviesDBHelper;
+import br.com.weblen.app.utilities.NetworkHelper;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+import static android.view.View.SCROLLBAR_POSITION_DEFAULT;
 import static br.com.weblen.app.BuildConfig.VALUE_API_KEY;
 
 public class MovieDetailActivity extends AppCompatActivity {
@@ -69,14 +70,14 @@ public class MovieDetailActivity extends AppCompatActivity {
     @BindView(R.id.pb_loading_indicator_reviews)
     ProgressBar mProgressBarReviews;
 
-    Movie mMovie = null;
-    private TrailersAdapter mTrailersAdapter;
-    private ArrayList<Trailer> mTrailersArray = new ArrayList<>();
-    private TrailerCollection mTrailerCollection = new TrailerCollection(mTrailersArray);
+    private       Movie              mMovie             = null;
+    private       TrailersAdapter    mTrailersAdapter;
+    private final ArrayList<Trailer> mTrailersArray     = new ArrayList<>();
+    private       TrailerCollection  mTrailerCollection = new TrailerCollection(mTrailersArray);
 
-    private ReviewsAdapter mReviewsAdapter;
-    private ArrayList<ReviewResult> mReviewsArray = new ArrayList<>();
-    private ReviewCollection mReviewCollection = new ReviewCollection(mReviewsArray);
+    private       ReviewsAdapter          mReviewsAdapter;
+    private final ArrayList<ReviewResult> mReviewsArray     = new ArrayList<>();
+    private       ReviewCollection        mReviewCollection = new ReviewCollection(mReviewsArray);
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
@@ -159,7 +160,7 @@ public class MovieDetailActivity extends AppCompatActivity {
         if (movie != null) {
             mTitle.setText(movie.getTitle());
             Picasso.with(getApplicationContext())
-                    .load(NetworkUtils.buildUrlPosterW185(movie.getPosterPath()))
+                    .load(NetworkHelper.buildUrlPosterW185(movie.getPosterPath()))
                     .placeholder(R.drawable.ic_image_placeholder)
                     .error(R.drawable.ic_image_error)
                     .into(mPoster);
@@ -187,17 +188,19 @@ public class MovieDetailActivity extends AppCompatActivity {
                 mReleaseDate.append("-");
         }
 
-        mMovie = MoviesDBPersistence.checkFavoriteMovies(mMovie, this);
+        mMovie = MoviesDBHelper.checkFavoriteMovies(mMovie, this);
 
         isMovieStarred();
 
         if (trailers != null)
             processFinishTrailers(trailers);
 
+        mScrollView.setVerticalScrollbarPosition(SCROLLBAR_POSITION_DEFAULT);
+
         if (reviews != null)
             processFinishReviews(reviews);
 
-        mScrollView.scrollTo(0, 0);
+        mScrollView.setVerticalScrollbarPosition(SCROLLBAR_POSITION_DEFAULT);
     }
 
 
@@ -216,9 +219,9 @@ public class MovieDetailActivity extends AppCompatActivity {
 
         if (mMovie != null) {
             if (mMovie.isStarred()) {
-                mMovie = MoviesDBPersistence.excludeStarredMovie(mMovie, getApplicationContext());
+                mMovie = MoviesDBHelper.excludeStarredMovie(mMovie, getApplicationContext());
             } else {
-                mMovie = MoviesDBPersistence.includeStarredMovie(mMovie, getApplicationContext());
+                mMovie = MoviesDBHelper.includeStarredMovie(mMovie, getApplicationContext());
             }
         }
     }

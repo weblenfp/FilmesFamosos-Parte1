@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Filmes Famosos - Parte 1</string>
+    <string name="app_name">Filmes Famosos - Parte 2</string>
     <string name="title_activity_movie_detail">MovieDetailActivity</string>
     <string name="menu_popularity">Ordenar por Popularidade</string>
     <string name="menu_rating">Ordenar por Avaliação</string>
@@ -9,7 +9,6 @@
     <string name="label_release_date">Data de lançamento:\n</string>
     <string name="poster_do_filme">poster do filme</string>
     <string name="marcar_como_favorito">Marcar como\n Favorito</string>
-    <string name="remover_como_favorito">Remover como\n Favorito</string>
     <string name="play_trailer">Play Trailer</string>
     <string name="lorem_text">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</string>
     <string name="comentarios_filme">Comentários do filme</string>
