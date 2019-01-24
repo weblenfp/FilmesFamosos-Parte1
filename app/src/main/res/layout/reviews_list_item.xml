@@ -26,22 +26,26 @@
             android:layout_height="wrap_content">
 
             <ImageView
-                android:id="@+id/play"
+                android:id="@+id/review"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:contentDescription="@string/comentarios_filme"
+                android:paddingStart="10sp"
+                android:paddingEnd="5sp"
                 android:src="@drawable/ic_comment_blue_24dp"
                 card_view:layout_constraintBottom_toBottomOf="parent"
+                card_view:layout_constraintEnd_toStartOf="@+id/author"
                 card_view:layout_constraintLeft_toLeftOf="parent"
                 card_view:layout_constraintTop_toTopOf="parent" />
 
             <TextView
                 android:id="@+id/author"
                 style="@style/textDetails"
+                android:padding="8sp"
                 android:textAlignment="center"
                 android:textSize="25sp"
                 card_view:layout_constraintBottom_toBottomOf="parent"
-                card_view:layout_constraintLeft_toRightOf="@id/play"
+                card_view:layout_constraintLeft_toRightOf="@id/review"
                 card_view:layout_constraintTop_toTopOf="parent"
                 tools:text="Author" />
 

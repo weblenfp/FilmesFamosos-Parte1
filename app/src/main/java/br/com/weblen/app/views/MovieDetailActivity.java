@@ -196,6 +196,8 @@ public class MovieDetailActivity extends AppCompatActivity {
 
         if (reviews != null)
             processFinishReviews(reviews);
+
+        mScrollView.scrollTo(0, 0);
     }
 
 

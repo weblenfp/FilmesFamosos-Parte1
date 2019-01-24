@@ -26,7 +26,7 @@
             android:padding="15dp">
 
             <ImageView
-                android:id="@+id/play"
+                android:id="@+id/review"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:contentDescription="@string/play_trailer"
@@ -45,7 +45,7 @@
                 android:textSize="18sp"
                 card_view:layout_constraintBottom_toBottomOf="parent"
                 card_view:layout_constraintEnd_toEndOf="parent"
-                card_view:layout_constraintLeft_toRightOf="@id/play"
+                card_view:layout_constraintLeft_toRightOf="@id/review"
                 card_view:layout_constraintTop_toTopOf="parent"
                 tools:text="Trailer 1" />
 
